@@ -1,5 +1,7 @@
-"# Web-HeroVerse" 
-"/HeroVerse
+# Web-HeroVerse
+
+```
+/HeroVerse
 │
 ├── /public                  # Publicly accessible files
 │   ├── /css                 # Stylesheets
@@ -21,7 +23,7 @@
 ├── /config                  # Configuration files
 │   ├── database.php         # Database connection logic
 │   ├── env.php              # Environment variable loader
-├── index.php            # Main entry point (public-facing)
+├── index.php                # Main entry point (public-facing)
 ├── .env                     # Stores environment variables
 └── .htaccess                # Optional for URL rewriting
-"
+```
