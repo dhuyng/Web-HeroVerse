@@ -1,5 +1,5 @@
 "# Web-HeroVerse" 
-/HeroVerse
+"/HeroVerse
 │
 ├── /public                  # Publicly accessible files
 │   ├── /css                 # Stylesheets
@@ -24,3 +24,4 @@
 ├── index.php            # Main entry point (public-facing)
 ├── .env                     # Stores environment variables
 └── .htaccess                # Optional for URL rewriting
+"
