@@ -1,7 +1,7 @@
 <?php
 // Gọi controller chính
 require_once 'app/controllers/HomeController.php';
-
+require_once 'config/tables_create.php';
 $url = $_GET['url'] ?? 'home'; // Lấy URL hoặc mặc định là 'home'
 
 $controller = new HomeController();
