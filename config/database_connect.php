@@ -1,5 +1,5 @@
 <?php
-// database.php
+// database_connect.php
 require_once 'env.php';
 
 // Get database credentials from environment variables
@@ -40,5 +40,5 @@ if (!$db_check) {
 // Now you are connected to the selected database and can proceed with other operations.
 
 // Close the connection (optional, typically you’ll do this at the end of the script)
-mysqli_close($conn);
+// mysqli_close($conn);
 ?>

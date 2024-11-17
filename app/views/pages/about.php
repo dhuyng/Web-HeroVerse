@@ -16,7 +16,7 @@
             </div>
             <div class="text-center mt-4">
                 <video controls autoplay width="70%" height="70%">
-                    <source src="/HeroVerse/public/img/vid.mp4" type="video/mp4">
+                    <source src="public/img/vid.mp4" type="video/mp4">
                 </video>
             </div>
         </div>
@@ -31,7 +31,7 @@
                 <div class="col-lg-4 col-md-12 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="team-item text-center rounded overflow-hidden">
                         <div class="rounded-circle overflow-hidden m-4">
-                            <img class="img-fluid" src="/HeroVerse/public/img/mem1.png" alt="Team Member 1">
+                            <img class="img-fluid" src="public/img/mem1.png" alt="Team Member 1">
                         </div>
                         <h5 class="mb-0">Đức Huy</h5>
                         <small>2152592</small>
@@ -46,7 +46,7 @@
                 <div class="col-lg-4 col-md-12 wow fadeInUp" data-wow-delay="0.3s">
                     <div class="team-item text-center rounded overflow-hidden">
                         <div class="rounded-circle overflow-hidden m-4">
-                            <img class="img-fluid" src="/HeroVerse/public/img/mem2.png" alt="Team Member 2">
+                            <img class="img-fluid" src="public/img/mem2.png" alt="Team Member 2">
                         </div>
                         <h5 class="mb-0">Phan Thiên</h5>
                         <small>2153823</small>
@@ -60,7 +60,7 @@
                 <div class="col-lg-4 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
                     <div class="team-item text-center rounded overflow-hidden">
                         <div class="rounded-circle overflow-hidden m-4">
-                            <img class="img-fluid" src="/HeroVerse/public/img/mem3.png" alt="Team Member 3">
+                            <img class="img-fluid" src="public/img/mem3.png" alt="Team Member 3">
                         </div>
                         <h5 class="mb-0">Minh Hiếu</h5>
                         <small>2153341</small>

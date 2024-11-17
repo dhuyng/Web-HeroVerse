@@ -1,103 +1,61 @@
 <?php
-
-class HomeController {
-    public function index() {
-        $title = "Home - HeroVerse";
+// app/controllers/BaseController.php
+class BaseController {
+    public function render($page, $title) {
         include "app/views/layouts/header.php";
         include "app/views/layouts/navbar.php";
-        include "app/views/pages/index.php";
+        include "app/views/pages/{$page}.php";
         include "app/views/layouts/footer.php";
+    }
+}
+
+// app/controllers/HomeController.php
+class HomeController extends BaseController {
+    public function index() {
+        $this->render('index', 'Home - HeroVerse');
     }
     
     public function about() {
-        $title = "About Us - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/pages/about.php";
-        include "app/views/layouts/footer.php";
+        $this->render('about', 'About Us - HeroVerse');
     }
 
     public function heroes() {
-        $title = "Heroes - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/pages/heroes.php";
-        include "app/views/layouts/footer.php";
+        $this->render('heroes', 'Heroes - HeroVerse');
     }
 
     public function maps() {
-        $title = "Maps - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/pages/maps.php";
-        include "app/views/layouts/footer.php";
+        $this->render('maps', 'Maps - HeroVerse');
     }
 
     public function event() {
-        $title = "Event - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/pages/event.php";
-        include "app/views/layouts/footer.php";
+        $this->render('event', 'Event - HeroVerse');
     }
 
     public function pricing() {
-        $title = "Pricing - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/pages/Pricing.php";
-        include "app/views/layouts/footer.php";
+        $this->render('Pricing', 'Pricing - HeroVerse');
     }
 
-
     public function contact() {
-        $title = "Contact - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/pages/contact.php";
-        include "app/views/layouts/footer.php";
+        $this->render('contact', 'Contact - HeroVerse');
     }
 
     public function login() {
-        $title = "Login - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/pages/login.php";
-        include "app/views/layouts/footer.php";
+        $this->render('login', 'Login - HeroVerse');
     }
 
     public function register() {
-        $title = "Register - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/pages/register.php";
-        include "app/views/layouts/footer.php";
+        $this->render('register', 'Register - HeroVerse');
     }
 
     public function info() {
-        $title = "Thông Tin Tài Khoản - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/user/info.php";
-        include "app/views/layouts/footer.php";
+        $this->render('user/info', 'Thông Tin Tài Khoản - HeroVerse');
     }
 
     public function balance() {
-        $title = "Nạp Số Dư - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/user/balance.php";
-        include "app/views/layouts/footer.php";
+        $this->render('user/balance', 'Nạp Số Dư - HeroVerse');
     }
 
     public function history() {
-        $title = "Lịch Sử Giao Dịch - HeroVerse";
-        include "app/views/layouts/header.php";
-        include "app/views/layouts/navbar.php";
-        include "app/views/user/history.php";
-        include "app/views/layouts/footer.php";
+        $this->render('user/history', 'Lịch Sử Giao Dịch - HeroVerse');
     }
-
-
-  
 }

@@ -15,7 +15,7 @@
         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
         <button type="submit" class="btn btn-primary">Đăng ký</button>
     </form>
-    <p>Nếu bạn đã có tài khoản <a href="/login">Đăng nhập ở đây</a>.</p>
+    <p>Nếu bạn đã có tài khoản <a href="login">Đăng nhập ở đây</a>.</p>
 </div>
 
 <style>
@@ -92,7 +92,7 @@
 
     // Load texture
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load('/HeroVerse/public/img/account.png');
+    const texture = textureLoader.load('public/img/account.png');
 
     // Create planes with images
     const imagePlanes = [];

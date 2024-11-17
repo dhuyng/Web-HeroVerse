@@ -2,7 +2,7 @@
 // session_start();
 // Kiểm tra nếu người dùng chưa đăng nhập hoặc không phải admin, chuyển hướng đến trang đăng nhập
 // if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== true) {
-//     header("Location: /HeroVerse/login");
+//     header("Location: login");
 //     exit;
 // }
 
@@ -78,9 +78,9 @@ include __DIR__ . '/../layouts/navbar.php';
     <!-- Các liên kết quản lý -->
     <div class="mt-4">
         <h5 class="fw-bold">Truy cập nhanh:</h5>
-        <a href="/HeroVerse/app/views/admin/user_mgmt.php" class="btn btn-outline-primary me-2">Quản Lý Người Dùng</a>
-        <a href="/HeroVerse/app/views/admin/content_mgmt.php" class="btn btn-outline-secondary me-2">Quản Lý Nội Dung</a>
-        <a href="/HeroVerse/app/views/admin/support.php" class="btn btn-outline-danger">Xem biểu mẫu User</a>
+        <a href="app/views/admin/user_mgmt.php" class="btn btn-outline-primary me-2">Quản Lý Người Dùng</a>
+        <a href="app/views/admin/content_mgmt.php" class="btn btn-outline-secondary me-2">Quản Lý Nội Dung</a>
+        <a href="app/views/admin/support.php" class="btn btn-outline-danger">Xem biểu mẫu User</a>
     </div>
 </div>
 

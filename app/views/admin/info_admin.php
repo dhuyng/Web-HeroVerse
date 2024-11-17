@@ -10,7 +10,7 @@
             <form method="post" enctype="multipart/form-data">
                 <!-- Ảnh đại diện -->
                 <div class="form-group text-center mb-4">
-                    <img src="/HeroVerse/public/img/account-black.png" alt="User Avatar" id="userAvatar" class="rounded-circle border img-thumbnail shadow wow fadeIn" style="width: 150px; height: 150px;">
+                    <img src="public/img/account-black.png" alt="User Avatar" id="userAvatar" class="rounded-circle border img-thumbnail shadow wow fadeIn" style="width: 150px; height: 150px;">
                     <div class="mt-3">
                         <input type="file" name="profile_pic" accept="image/*" class="form-control form-control-sm">
                         <small class="form-text text-muted">Chọn ảnh để thay đổi ảnh đại diện.</small>

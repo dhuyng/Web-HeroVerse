@@ -15,7 +15,7 @@
                             <li>Hỗ trợ tiêu chuẩn</li>
                         </ul>
                         <br> <br>
-                        <a href="/HeroVerse/login" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideỈnight fw-bold">Sign up for free</a> 
+                        <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideỈnight fw-bold">Sign up for free</a> 
 
                     </div>
                 </div>

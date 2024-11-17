@@ -1,4 +1,4 @@
-<div class="container-fluid py-5 " style="background-image: url(/HeroVerse/public/img/background/bg-0.jpg); background-size: cover ">
+<div class="container-fluid py-5 " style="background-image: url(public/img/background/bg-0.jpg); background-size: cover ">
     <div class="text-center mb-4">
         <h1 class="mb-3 text-light" style="font-weight: bold; text-shadow: 2px 2px 10px rgba(0,0,0,0.7);">Hero List</h1>
         <input type="text" id="heroSearch" class="form-control w-50 mx-auto mb-4 bg-dark text-light border border-secondary" placeholder="Search heroes by name...">
@@ -25,16 +25,16 @@
         <?php
         // Danh sách các heroes
         $heroes = [
-            ["name" => "Dragneel", "image" => "/HeroVerse/public/img/gameplay/heroes/ava-1.png", "category" => "dark-hero"],
-            ["name" => "Zara", "image" => "/HeroVerse/public/img/gameplay/heroes/ava-7.png", "category" => "light-hero"],
-            ["name" => "Kael", "image" => "/HeroVerse/public/img/gameplay/heroes/ava-3.png", "category" => "dark-hero"],
-            ["name" => "Drake", "image" => "/HeroVerse/public/img/gameplay/heroes/ava-6.png", "category" => "light-hero"],
-            ["name" => "Veras", "image" => "/HeroVerse/public/img/gameplay/heroes/ava-2.png", "category" => "dark-hero"],
-            ["name" => "Faye", "image" => "/HeroVerse/public/img/gameplay/heroes/ava-9.png", "category" => "light-hero"],
-            ["name" => "Aira", "image" => "/HeroVerse/public/img/gameplay/heroes/ava-5.png", "category" => "dark-hero"],
-            ["name" => "Ryn", "image" => "/HeroVerse/public/img/gameplay/heroes/ava-8.png", "category" => "light-hero"],
-            ["name" => "Vex", "image" => "/HeroVerse/public/img/gameplay/heroes/ava-4.png", "category" => "dark-hero"],
-            ["name" => "Kain", "image" => "/HeroVerse/public/img/gameplay/heroes/ava-10.png", "category" => "light-hero"],
+            ["name" => "Dragneel", "image" => "public/img/gameplay/heroes/ava-1.png", "category" => "dark-hero"],
+            ["name" => "Zara", "image" => "public/img/gameplay/heroes/ava-7.png", "category" => "light-hero"],
+            ["name" => "Kael", "image" => "public/img/gameplay/heroes/ava-3.png", "category" => "dark-hero"],
+            ["name" => "Drake", "image" => "public/img/gameplay/heroes/ava-6.png", "category" => "light-hero"],
+            ["name" => "Veras", "image" => "public/img/gameplay/heroes/ava-2.png", "category" => "dark-hero"],
+            ["name" => "Faye", "image" => "public/img/gameplay/heroes/ava-9.png", "category" => "light-hero"],
+            ["name" => "Aira", "image" => "public/img/gameplay/heroes/ava-5.png", "category" => "dark-hero"],
+            ["name" => "Ryn", "image" => "public/img/gameplay/heroes/ava-8.png", "category" => "light-hero"],
+            ["name" => "Vex", "image" => "public/img/gameplay/heroes/ava-4.png", "category" => "dark-hero"],
+            ["name" => "Kain", "image" => "public/img/gameplay/heroes/ava-10.png", "category" => "light-hero"],
         ];
 
         // Hiển thị danh sách heroes
@@ -43,7 +43,7 @@
             <div class="col-sm-6 col-md-3 mb-4 hero-item ' . $hero["category"] . '">
                 <div class="card text-light text-center shadow-lg border-0 h-100 hero-card" style="position: relative; background-color: #3B1E54;">
                     <div class="threejs-container"></div> <!-- Three.js container for particles -->
-                    <a href="/HeroVerse/app/views/heroes/' . strtolower($hero["name"]) . '.php" class="hero-link">
+                    <a href="app/views/heroes/' . strtolower($hero["name"]) . '.php" class="hero-link">
                         <img src="' . $hero["image"] . '" class="card-img-top img-fluid rounded-circle mx-auto mt-3 hero-img" style="width: 150px; height: 150px;" alt="' . $hero["name"] . '">
                     </a>
                     <div class="card-body">

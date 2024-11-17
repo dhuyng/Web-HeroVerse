@@ -8,7 +8,7 @@
                 <label class="form-label fw-bold">Số Dư Hiện Tại:</label>
                 <div class="d-flex justify-content-center align-items-center">
                     <span id="balance" class="fw-bold text-success me-2 fs-4">1000</span>
-                    <img src="/HeroVerse/public/img/coin.png" alt="Coin Icon" style="width: 32px; height: 32px;">
+                    <img src="public/img/coin.png" alt="Coin Icon" style="width: 32px; height: 32px;">
                 </div>
             </div>
 
@@ -20,10 +20,10 @@
                     <div class="d-flex justify-content-around mt-3">
                         <button type="button" class="btn btn-outline-primary recharge-option" data-method="code">Nhập Mã Code</button>
                         <button type="button" class="btn btn-outline-success recharge-option" data-method="momo">
-                            <img src="/HeroVerse/public/img/download/momo.png" alt="MoMo" style="width: 50px; height: auto;">
+                            <img src="public/img/download/momo.png" alt="MoMo" style="width: 50px; height: auto;">
                         </button>
                         <button type="button" class="btn btn-outline-info recharge-option" data-method="zalopay">
-                            <img src="/HeroVerse/public/img/download/zalopay.png" alt="ZaloPay" style="width: 50px; height: auto;">
+                            <img src="public/img/download/zalopay.png" alt="ZaloPay" style="width: 50px; height: auto;">
                         </button>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                         <button type="button" class="btn btn-success" id="confirmTransactionBtn">Xác Nhận Thanh Toán</button>
                     </div>
                     <div id="qrCode" class="text-center mt-4" style="display: none;">
-                        <img src="/HeroVerse/public/img/qr.png" alt="QR Code" style="width: 200px; height: auto;">
+                        <img src="public/img/qr.png" alt="QR Code" style="width: 200px; height: auto;">
                     </div>
                 </div>
             </form>

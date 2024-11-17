@@ -2,10 +2,10 @@
     <h1 class="text-light mb-4" style="font-weight: bold; text-shadow: 2px 2px 10px rgba(0,0,0,0.7);">MAPS</h1>
     <div id="mapsCarousel" class="d-flex justify-content-center flex-wrap">
         <!-- Quả cầu đại diện cho các maps -->
-        <div class="map-sphere" data-map="/HeroVerse/public/img/gameplay/maps/1.png" data-title="Nightmare War"></div>
-        <div class="map-sphere" data-map="/HeroVerse/public/img/gameplay/maps/2.png" data-title="Frozen Abyss"></div>
-        <div class="map-sphere" data-map="/HeroVerse/public/img/gameplay/maps/3.png" data-title="Necrotic Wasteland"></div>
-        <div class="map-sphere" data-map="/HeroVerse/public/img/gameplay/maps/4.png" data-title="Volcanic Lands"></div>
+        <div class="map-sphere" data-map="public/img/gameplay/maps/1.png" data-title="Nightmare War"></div>
+        <div class="map-sphere" data-map="public/img/gameplay/maps/2.png" data-title="Frozen Abyss"></div>
+        <div class="map-sphere" data-map="public/img/gameplay/maps/3.png" data-title="Necrotic Wasteland"></div>
+        <div class="map-sphere" data-map="public/img/gameplay/maps/4.png" data-title="Volcanic Lands"></div>
     </div>
 </div>
 

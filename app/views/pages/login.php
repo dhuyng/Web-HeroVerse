@@ -15,7 +15,7 @@
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit" class="btn btn-primary">LOG IN</button>
     </form>
-    <p> Nếu bạn chưa có tài khoản <a href="/HeroVerse/register">Đăng ký ở đây</a>.</p>
+    <p> Nếu bạn chưa có tài khoản <a href="register">Đăng ký ở đây</a>.</p>
 </div>
 
 <style>

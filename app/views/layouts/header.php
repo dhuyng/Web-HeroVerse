@@ -24,17 +24,17 @@
 
 
     <!-- Libraries Stylesheet -->
-    <link href="/HeroVerse/public/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="/HeroVerse/public/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="/HeroVerse/public/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="public/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="public/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="public/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
 
     
 
     <!-- Customized Bootstrap & Main Stylesheet -->
-    <link href="/HeroVerse/public/css/style.css" rel="stylesheet">
-    <link href="/HeroVerse/public/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/HeroVerse/public/lib/animate/animate.css" rel="stylesheet">
+    <link href="public/css/style.css" rel="stylesheet">
+    <link href="public/css/bootstrap.min.css" rel="stylesheet">
+    <link href="public/lib/animate/animate.css" rel="stylesheet">
 
 
 </head>

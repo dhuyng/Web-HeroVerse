@@ -7,7 +7,7 @@
             <form method="post" enctype="multipart/form-data">
                 <!-- Ảnh đại diện -->
                 <div class="form-group text-center mb-4">
-                    <img src="/HeroVerse/public/img/account-black.png" alt="User Avatar" id="userAvatar" class="rounded-circle border img-thumbnail shadow-lg mb-3" style="width: 150px; height: 150px;">
+                    <img src="public/img/account-black.png" alt="User Avatar" id="userAvatar" class="rounded-circle border img-thumbnail shadow-lg mb-3" style="width: 150px; height: 150px;">
                     <div class="mt-2">
                         <input type="file" name="profile_pic" accept="image/*" class="form-control form-control-sm border-primary rounded-pill shadow-sm">
                         <small class="form-text text-muted">Chọn ảnh để thay đổi ảnh đại diện.</small>
@@ -58,7 +58,7 @@
                     <label class="form-label fw-bold text-secondary">Số Dư Hiện Tại:</label>
                     <div class="d-flex align-items-center mt-2">
                         <span id="balance" class="fw-bold text-success me-2 fs-4">1000</span>
-                        <img src="/HeroVerse/public/img/coin.png" alt="Coin Icon" style="width: 32px; height: 32px;">
+                        <img src="public/img/coin.png" alt="Coin Icon" style="width: 32px; height: 32px;">
                     </div>
                 </div>
 

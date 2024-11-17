@@ -7,7 +7,7 @@
         <!-- Column 1: GIF and Buy Button -->
         <div class="col-md-6 text-center">
             <div class="position-relative mb-4">
-                <img src="/HeroVerse/public/img/gameplay/heroes/dragneel.gif" alt="Dragneel" class="hero-gif" id="dragneelGif">
+                <img src="public/img/gameplay/heroes/dragneel.gif" alt="Dragneel" class="hero-gif" id="dragneelGif">
                 <div class="hero-shadow"></div> <!-- Bóng dưới Dragneel -->
             </div>
             <div class="text-center mb-4">
@@ -34,22 +34,22 @@
             <div class="row text-center">
                 <!-- Skill 1 -->
                 <div class="col-md-6 mb-4">
-                    <img src="/HeroVerse/public/img/skills/skill-1.png" alt="Skill 1" class="skill-img" data-bs-toggle="modal" data-bs-target="#skill1Modal">
+                    <img src="public/img/skills/skill-1.png" alt="Skill 1" class="skill-img" data-bs-toggle="modal" data-bs-target="#skill1Modal">
                     <p class="mt-2">Skill 1: Flame Burst</p>
                 </div>
                 <!-- Skill 2 -->
                 <div class="col-md-6 mb-4">
-                    <img src="/HeroVerse/public/img/skills/skill-2.png" alt="Skill 2" class="skill-img" data-bs-toggle="modal" data-bs-target="#skill2Modal">
+                    <img src="public/img/skills/skill-2.png" alt="Skill 2" class="skill-img" data-bs-toggle="modal" data-bs-target="#skill2Modal">
                     <p class="mt-2">Skill 2: Dragon Claw</p>
                 </div>
                 <!-- Skill 3 -->
                 <div class="col-md-6 mb-4">
-                    <img src="/HeroVerse/public/img/skills/skill-3.png" alt="Skill 3" class="skill-img" data-bs-toggle="modal" data-bs-target="#skill3Modal">
+                    <img src="public/img/skills/skill-3.png" alt="Skill 3" class="skill-img" data-bs-toggle="modal" data-bs-target="#skill3Modal">
                     <p class="mt-2">Skill 3: Roar of the Ancients</p>
                 </div>
                 <!-- Skill 4 -->
                 <div class="col-md-6 mb-4">
-                    <img src="/HeroVerse/public/img/skills/skill-4.png" alt="Skill 4" class="skill-img" data-bs-toggle="modal" data-bs-target="#skill4Modal">
+                    <img src="public/img/skills/skill-4.png" alt="Skill 4" class="skill-img" data-bs-toggle="modal" data-bs-target="#skill4Modal">
                     <p class="mt-2">Skill 4: Dragon Flight</p>
                 </div>
             </div>
