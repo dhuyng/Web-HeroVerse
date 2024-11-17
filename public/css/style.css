@@ -10,7 +10,7 @@
 }
 
 body,button, .btn, .nav-item, .nav-link, a, .btn.btn-primary {
-    cursor: url('/HeroVerse/public/img/mouse.png'), auto;
+    cursor: url('../img/mouse.png'), auto;
 }
 
 

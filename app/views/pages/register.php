@@ -8,13 +8,30 @@
         unset($_SESSION['error']);
     }
     ?>
-    <form id="registerForm" class="bg-dark text-center" action="" method="POST">
+    <form id="registerForm" class="bg-dark text-center" action="register" method="POST" onsubmit="return validateForm()">
         <input type="text" id="username" name="username" placeholder="Username (4-20 ký tự)" required minlength="4" maxlength="20">
         <input type="email" id="email" name="email" placeholder="Email" required>
         <input type="password" id="password" name="password" placeholder="Password (6-20 ký tự)" required minlength="6" maxlength="20">
         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
         <button type="submit" class="btn btn-primary">Đăng ký</button>
+        <p id="error-message" class="text-danger" style="display: none;"></p>
     </form>
+    <script>
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorMessage = document.getElementById('error-message');
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Passwords do not match!';
+                return false; // Prevent form submission
+            }
+
+            errorMessage.style.display = 'none';
+            return true; // Allow form submission
+        }
+    </script>
     <p>Nếu bạn đã có tài khoản <a href="login">Đăng nhập ở đây</a>.</p>
 </div>
 
@@ -131,14 +148,14 @@
     });
 
     // Form Validation with JavaScript
-    const registerForm = document.getElementById('registerForm');
-    registerForm.addEventListener('submit', function (event) {
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
+    // const registerForm = document.getElementById('registerForm');
+    // registerForm.addEventListener('submit', function (event) {
+    //     const password = document.getElementById('password').value;
+    //     const confirmPassword = document.getElementById('confirmPassword').value;
 
-        if (password !== confirmPassword) {
-            alert('Mật khẩu không khớp. Vui lòng kiểm tra lại.');
-            event.preventDefault(); // Ngăn chặn việc gửi form
-        }
-    });
+    //     if (password !== confirmPassword) {
+    //         alert('Mật khẩu không khớp. Vui lòng kiểm tra lại.');
+    //         event.preventDefault(); // Ngăn chặn việc gửi form
+    //     }
+    // });
 </script>

@@ -1,8 +1,12 @@
 <?php
-
 // app/models/User.php
+require_once(__DIR__ . "/../../config/Database.php");
 class User {
     private $db;
+
+    public function __construct() {
+        $this->db = Database::getConnection();
+    }
 
     public function register($username, $email, $password) {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
