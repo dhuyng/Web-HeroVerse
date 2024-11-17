@@ -8,14 +8,14 @@ class User {
         $this->db = Database::getConnection();
     }
 
-    public function register($username, $email, $password) {
+    public function register($username, $email, $password, $role) {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        $query = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+        $query = "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($this->db, $query);
 
         if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "sss", $username, $email, $hashedPassword);
+            mysqli_stmt_bind_param($stmt, "ssss", $username, $email, $hashedPassword, $role);
             return mysqli_stmt_execute($stmt);
         } else {
             return false;

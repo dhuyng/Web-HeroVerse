@@ -1,5 +1,6 @@
 <?php
 // index.php
+session_start();
 // Setting up the base URL dynamically
 $baseUrl = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/';
 ?>
@@ -42,7 +43,8 @@ switch ($url) {
         $controller->contact();
         break;
     case 'login':
-        $controller->login();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') $authController->login();
+        else $controller->login();
         break;
     case 'register':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') $authController->register();
@@ -56,6 +58,9 @@ switch ($url) {
         break;
     case 'history':
         $controller->history();
+        break;
+    case 'logout':
+        $authController->logout();
         break;
     default:
         $controller->index();

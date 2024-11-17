@@ -1,8 +1,8 @@
 <?php
 // app/views/layouts/navbar.php
 // Kiểm tra trạng thái đăng nhập và quyền admin
-$isLoggedIn = false; // Giả sử người dùng đã đăng nhập
-$isAdmin = false; // Giả sử người dùng là admin
+$isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in']; // Giả sử người dùng đã đăng nhập
+$isAdmin = isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'; // Giả sử người dùng là admin
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -62,11 +62,11 @@ $isAdmin = false; // Giả sử người dùng là admin
                     <li><a class="dropdown-item bg-dark text-white nav-link" href="info">Thông tin tài khoản</a></li>
                     <li><a class="dropdown-item bg-dark text-white nav-link" href="balance">Nạp số dư</a></li>
                     <li><a class="dropdown-item bg-dark text-white nav-link" href="history">Lịch sử giao dịch</a></li>
-                    <li><a class="dropdown-item bg-dark text-white nav-link" href="views/logout">Đăng xuất</a></li>
+                    <li><a class="dropdown-item bg-dark text-white nav-link" href="logout">Đăng xuất</a></li>
                 </q><?php elseif ($isLoggedIn && $isAdmin): ?>
                     <!-- Display when the user is logged in as an admin -->
                     <li><a class="dropdown-item bg-dark text-white nav-link" href="app/views/admin/info_admin.php">Thông tin tài khoản</a></li>
-                    <li><a class="dropdown-item bg-dark text-white nav-link" href="views/logout">Đăng xuất</a></li>
+                    <li><a class="dropdown-item bg-dark text-white nav-link" href="logout">Đăng xuất</a></li>
                 <?php else: ?>
                     <!-- Display when the user is not logged in -->
                     <li><a class="dropdown-item bg-dark text-white nav-link" href="login">Đăng nhập</a></li>

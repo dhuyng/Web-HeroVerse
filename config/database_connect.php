@@ -8,10 +8,8 @@ $username = $_ENV['DB_USER'];
 $password = $_ENV['DB_PASS'];
 $dbname = $_ENV['DB_NAME'];
 
-// Create a connection to MySQL server (without specifying a database initially)
 $conn = mysqli_connect($host, $username, $password);
 
-// Check if the connection is successful
 if (!$conn) {
     die('Database connection failed: ' . mysqli_connect_error());
 }
@@ -20,7 +18,6 @@ if (!$conn) {
 $db_check = mysqli_select_db($conn, $dbname);
 
 if (!$db_check) {
-    // If database does not exist, create it
     $create_db_query = "CREATE DATABASE IF NOT EXISTS $dbname CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
     
     if (mysqli_query($conn, $create_db_query)) {

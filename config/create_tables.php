@@ -2,7 +2,9 @@
 
 // create_tables.php
 
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
 
     // Database connection settings
