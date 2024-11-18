@@ -43,7 +43,7 @@
             <div class="col-sm-6 col-md-3 mb-4 hero-item ' . $hero["category"] . '">
                 <div class="card text-light text-center shadow-lg border-0 h-100 hero-card" style="position: relative; background-color: #3B1E54;">
                     <div class="threejs-container"></div> <!-- Three.js container for particles -->
-                    <a href="app/views/heroes/' . strtolower($hero["name"]) . '.php" class="hero-link">
+                    <a href="' . strtolower($hero["name"]) . '" class="hero-link">
                         <img src="' . $hero["image"] . '" class="card-img-top img-fluid rounded-circle mx-auto mt-3 hero-img" style="width: 150px; height: 150px;" alt="' . $hero["name"] . '">
                     </a>
                     <div class="card-body">

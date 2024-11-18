@@ -1,15 +1,3 @@
-<?php
-// session_start();
-// Kiểm tra nếu người dùng chưa đăng nhập hoặc không phải admin, chuyển hướng đến trang đăng nhập
-// if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== true) {
-//     header("Location: login");
-//     exit;
-// }
-
-include __DIR__ . '/../layouts/header.php';
-include __DIR__ . '/../layouts/navbar.php';
-?>
-
 <div class="container mt-5">
     <!-- Header Dashboard -->
     <div class="text-center mb-4">
@@ -78,9 +66,9 @@ include __DIR__ . '/../layouts/navbar.php';
     <!-- Các liên kết quản lý -->
     <div class="mt-4">
         <h5 class="fw-bold">Truy cập nhanh:</h5>
-        <a href="app/views/admin/user_mgmt.php" class="btn btn-outline-primary me-2">Quản Lý Người Dùng</a>
-        <a href="app/views/admin/content_mgmt.php" class="btn btn-outline-secondary me-2">Quản Lý Nội Dung</a>
-        <a href="app/views/admin/support.php" class="btn btn-outline-danger">Xem biểu mẫu User</a>
+        <a href="user_mgmt" class="btn btn-outline-primary me-2">Quản Lý Người Dùng</a>
+        <a href="content_mgmt" class="btn btn-outline-secondary me-2">Quản Lý Nội Dung</a>
+        <a href="support" class="btn btn-outline-danger">Xem biểu mẫu User</a>
     </div>
 </div>
 
@@ -110,5 +98,3 @@ include __DIR__ . '/../layouts/navbar.php';
         }
     });
 </script>
-
-<?php include __DIR__ . '/../layouts/footer.php'; ?>

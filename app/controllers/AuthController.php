@@ -43,7 +43,13 @@ class AuthController extends BaseController {
                 // After successful login in the AuthController
                 $_SESSION['user'] = $user;  // Store user data
                 $_SESSION['logged_in'] = true;  // Indicate the user is logged in
-                header("Location: home");
+                if ($user['role'] === 'admin') {
+                    // Nếu là admin, chuyển đến trang dashboard
+                    header("Location: dashboard");
+                } else {
+                    // Nếu là user, chuyển đến trang home
+                    header("Location: home");
+                }
                 exit();
             } else {
                 $_SESSION['error'] = "Invalid username or password.";

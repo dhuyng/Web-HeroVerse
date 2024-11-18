@@ -1,6 +1,3 @@
-<?php include(__DIR__ . '/../layouts/header.php'); ?>
-<?php include(__DIR__ . '/../layouts/navbar.php'); ?>
-
 <div class="container-fluid text-white py-5 bg-dark">
     <h1 class="text-center mb-4 fw-bold" style="color: #00FF00">DRAGNELL</h1>
     <div class="row">
@@ -189,5 +186,3 @@ document.getElementById('dragneelGif').addEventListener('click', function() {
     }
 });
 </script>
-
-<?php include(__DIR__ . '/../layouts/footer.php'); ?>

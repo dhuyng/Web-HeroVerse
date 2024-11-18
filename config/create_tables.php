@@ -126,6 +126,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
     }
 
     // Function to load users from CSV using stored procedure
+// Function to load users from CSV using stored procedure
     function loadUsersFromCSV($mysqli, $csvFile) {
         if (($handle = fopen($csvFile, 'r')) !== FALSE) {
             // Skip header
@@ -135,12 +136,24 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
             while (($data = fgetcsv($handle, 1000, ',')) !== FALSE) {
                 [$username, $email, $password, $role] = $data;
 
-                if ($stmt = $mysqli->prepare("CALL insert_user(?, ?, ?, ?)")) {
-                    $stmt->bind_param("ssss", $username, $email, $password, $role);
-                    $stmt->execute();
-                    $stmt->close();
+                // Kiểm tra trùng lặp username
+                $checkStmt = $mysqli->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
+                $checkStmt->bind_param("s", $username);
+                $checkStmt->execute();
+                $checkStmt->bind_result($count);
+                $checkStmt->fetch();
+                $checkStmt->close();
+
+                if ($count > 0) {
+                    echo "User `$username` already exists, skipping insertion.<br>";
                 } else {
-                    echo "Error executing `insert_user` for user `$username`: " . $mysqli->error . "<br>";
+                    if ($stmt = $mysqli->prepare("CALL insert_user(?, ?, ?, ?)")) {
+                        $stmt->bind_param("ssss", $username, $email, $password, $role);
+                        $stmt->execute();
+                        $stmt->close();
+                    } else {
+                        echo "Error executing `insert_user` for user `$username`: " . $mysqli->error . "<br>";
+                    }
                 }
             }
 
@@ -151,12 +164,13 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
         }
     }
 
-    // Load CSV data into users table
-    if (file_exists($csvFile)) {
-        loadUsersFromCSV($mysqli, $csvFile);
-    } else {
-        echo "CSV file not found at: $csvFile<br>";
-    }
+
+    // // Load CSV data into users table
+    // if (file_exists($csvFile)) {
+    //     loadUsersFromCSV($mysqli, $csvFile);
+    // } else {
+    //     echo "CSV file not found at: $csvFile<br>";
+    // }
 
     // Close connection
     $mysqli->close();

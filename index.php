@@ -62,6 +62,36 @@ switch ($url) {
     case 'logout':
         $authController->logout();
         break;
+
+    case 'dragneel':
+        $controller->dragneel();
+        break;
+
+    case 'dashboard':
+        $controller->dashboard();
+        break;
+
+    case 'content_mgmt':
+        $controller->content_mgmt();
+        break;
+
+    case 'user_mgmt':
+        $controller->user_mgmt();
+        break;
+
+    case 'info_admin':
+        $controller->info_admin();
+        break;
+        
+    case 'support':
+        $controller->support();
+        break;
+
+    case 'join_squad_event':
+        $controller->join_squad_event();
+        break;
+
+
     default:
         $controller->index();
         break;

@@ -43,10 +43,10 @@ $isAdmin = isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'; //
                     <li class="nav-item fw-bold"><a class="nav-link" href="contact">Contact</a></li>
                 <?php else: ?>
                     <!-- Admin Navigation -->
-                    <li class="nav-item fw-bold"><a class="nav-link" href="app/views/admin/dashboard.php">Dashboard</a></li>
-                    <li class="nav-item fw-bold"><a class="nav-link" href="app/views/admin/user_mgmt.php">User Mgmt</a></li>
-                    <li class="nav-item fw-bold"><a class="nav-link" href="app/views/admin/content_mgmt.php">Content Mgmt</a></li>
-                    <li class="nav-item fw-bold"><a class="nav-link" href="app/views/admin/support.php">Support</a></li>
+                    <li class="nav-item fw-bold"><a class="nav-link" href="dashboard">Dashboard</a></li>
+                    <li class="nav-item fw-bold"><a class="nav-link" href="user_mgmt">User Mgmt</a></li>
+                    <li class="nav-item fw-bold"><a class="nav-link" href="content_mgmt">Content Mgmt</a></li>
+                    <li class="nav-item fw-bold"><a class="nav-link" href="support">Support</a></li>
                 <?php endif; ?>
             </ul>
         </div>
@@ -65,7 +65,7 @@ $isAdmin = isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'; //
                     <li><a class="dropdown-item bg-dark text-white nav-link" href="logout">Đăng xuất</a></li>
                 </q><?php elseif ($isLoggedIn && $isAdmin): ?>
                     <!-- Display when the user is logged in as an admin -->
-                    <li><a class="dropdown-item bg-dark text-white nav-link" href="app/views/admin/info_admin.php">Thông tin tài khoản</a></li>
+                    <li><a class="dropdown-item bg-dark text-white nav-link" href="info_admin">Thông tin tài khoản</a></li>
                     <li><a class="dropdown-item bg-dark text-white nav-link" href="logout">Đăng xuất</a></li>
                 <?php else: ?>
                     <!-- Display when the user is not logged in -->

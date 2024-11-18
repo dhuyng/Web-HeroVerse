@@ -1,6 +1,3 @@
-<?php include(__DIR__ . '/../layouts/header.php'); ?>
-<?php include(__DIR__ . '/../layouts/navbar.php'); ?>
-
 <div class="container mt-5">
     <div class="card shadow-lg border-0 rounded-4">
         <div class="card-body p-4">
@@ -28,13 +25,27 @@
                     <input type="text" name="username" id="username" value="dragneel_user" class="form-control border-primary shadow-sm wow fadeIn" placeholder="Nhập tên người dùng">
                 </div>
 
-
                 <!-- Đổi mật khẩu -->
                 <div class="form-group mb-4">
                     <label for="password" class="form-label fw-bold">Mật Khẩu Mới</label>
-                    <input type="password" name="password" id="password" class="form-control border-primary shadow-sm wow fadeIn" placeholder="Nhập mật khẩu mới">
+                    <div class="input-group">
+                        <input type="password" name="password" id="password" class="form-control border-primary shadow-sm wow fadeIn" placeholder="Nhập mật khẩu mới">
+                        <button type="button" id="togglePassword" class="btn btn-outline-secondary rounded-pill shadow-sm" style="margin-left: -45px; z-index: 1;">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
+                <!-- Nhập lại mật khẩu -->
+                <div class="form-group mb-4">
+                    <label for="confirm_password" class="form-label fw-bold">Nhập Lại Mật Khẩu</label>
+                    <div class="input-group">
+                        <input type="password" name="confirm_password" id="confirm_password" class="form-control border-primary shadow-sm wow fadeIn" placeholder="Nhập lại mật khẩu mới">
+                        <button type="button" id="toggleConfirmPassword" class="btn btn-outline-secondary rounded-pill shadow-sm" style="margin-left: -45px; z-index: 1;">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
 
                 <!-- Nút cập nhật thông tin -->
                 <div class="form-group text-center">
@@ -45,4 +56,38 @@
     </div>
 </div>
 
-<?php include(__DIR__ . '/../layouts/footer.php'); ?>
+<script>
+    // Chức năng hiển thị ẩn mật khẩu
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordField = document.getElementById('password');
+        const passwordFieldType = passwordField.getAttribute('type');
+        const icon = this.querySelector('i');
+
+        if (passwordFieldType === 'password') {
+            passwordField.setAttribute('type', 'text');
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            passwordField.setAttribute('type', 'password');
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
+
+    // Chức năng hiển thị ẩn mật khẩu nhập lại
+    document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+        const confirmPasswordField = document.getElementById('confirm_password');
+        const confirmPasswordFieldType = confirmPasswordField.getAttribute('type');
+        const icon = this.querySelector('i');
+
+        if (confirmPasswordFieldType === 'password') {
+            confirmPasswordField.setAttribute('type', 'text');
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            confirmPasswordField.setAttribute('type', 'password');
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
+</script>

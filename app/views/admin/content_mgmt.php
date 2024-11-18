@@ -1,6 +1,3 @@
-<?php include(__DIR__ . '/../layouts/header.php'); ?>
-<?php include(__DIR__ . '/../layouts/navbar.php'); ?>
-
 <div class="container mt-5">
     <h3 class="text-center text-primary mb-4">Quản Lý Nội Dung</h3>
 
@@ -166,4 +163,3 @@
     });
 </script>
 
-<?php include(__DIR__ . '/../layouts/footer.php'); ?>

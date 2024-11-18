@@ -49,4 +49,34 @@ class HomeController extends BaseController {
     public function history() {
         $this->render('user/history', 'Lịch Sử Giao Dịch - HeroVerse');
     }
+
+    public function dragneel() {
+        $this->renderHeroes('dragneel', 'Dragneel - HeroVerse');
+    }
+
+    public function dashboard() {
+        $this->renderAdmin('dashboard', 'Dashboard - HeroVerse');
+    }
+
+    public function content_mgmt() {
+        $this->renderAdmin('content_mgmt', 'Content Management - HeroVerse');
+    }
+
+    public function user_mgmt() {
+        $this->renderAdmin('user_mgmt', 'User Mangament - HeroVerse');
+    }
+    
+    public function info_admin() {
+        $this->renderAdmin('info_admin', 'Info Admin - HeroVerse');
+    }
+
+    public function support() {
+        $this->renderAdmin('support', 'Support - HeroVerse');
+    }
+
+    public function join_squad_event() {
+        $this->render('event/join_squad_event', 'Join Squad Event - HeroVerse');
+    }
+
+
 }

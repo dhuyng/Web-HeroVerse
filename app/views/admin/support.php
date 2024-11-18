@@ -1,6 +1,3 @@
-<?php include(__DIR__ . '/../layouts/header.php'); ?>
-<?php include(__DIR__ . '/../layouts/navbar.php'); ?>
-
 <div class="container mt-5">
     <h3 class="text-center mb-4 text-primary">Hỗ Trợ Khách Hàng</h3>
 
@@ -70,6 +67,3 @@
         </div>
     </div>
 </div>
-
-
-<?php include(__DIR__ . '/../layouts/footer.php'); ?>
