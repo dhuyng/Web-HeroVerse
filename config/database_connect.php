@@ -30,12 +30,4 @@ if (!$db_check) {
     if (!mysqli_select_db($conn, $dbname)) {
         die('Error selecting database: ' . mysqli_error($conn));
     }
-} else {
-    echo "Database '$dbname' already exists and is selected.<br>";
 }
-
-// Now you are connected to the selected database and can proceed with other operations.
-
-// Close the connection (optional, typically you’ll do this at the end of the script)
-// mysqli_close($conn);
-?>

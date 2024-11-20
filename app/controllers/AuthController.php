@@ -67,4 +67,28 @@ class AuthController extends BaseController {
         header("Location: login");
         exit();
     }
+    
+    public function verifyCurrentPassword() {
+        // Check if it's an AJAX request
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Get the current user ID from session
+            $userId = $_SESSION['user']['id'];
+            
+            // Get the current password from the request payload (JSON)
+            $data = json_decode(file_get_contents("php://input"), true);
+            $currentPassword = $data['password'];
+            
+            // Create the user model instance
+            $userModel = new User();
+            // Verify the current password
+            $isPasswordValid = $userModel->verifyCurrentPassword($userId, $currentPassword);
+
+            // Return JSON response
+            echo json_encode(['success' => $isPasswordValid]);
+        } else {
+            // If not an AJAX request, return an error or render a view
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
+    
 }

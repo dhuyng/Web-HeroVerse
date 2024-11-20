@@ -8,7 +8,7 @@ class User {
         $this->db = Database::getConnection();
     }
 
-    public function register($username, $email, $password, $role) {
+    public function register($username, $email, $password, $role): bool {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
         $query = "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)";
@@ -52,4 +52,47 @@ class User {
         }
         return null;
     }
+
+    public function updateUserInfo($userId, $username, $email, $newPassword, $profilePic, $twoFA) {
+        $query = "UPDATE users SET username = ?, email = ?, profile_pic = ?, two_fa_enabled = ? WHERE id = ?";
+        
+        $stmt = mysqli_prepare($this->db, $query);
+        
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "ssssi", $username, $email, $profilePic, $twoFA, $userId);
+            $result = mysqli_stmt_execute($stmt);
+            
+            if ($newPassword) {
+                $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+                $passwordQuery = "UPDATE users SET password = ? WHERE id = ?";
+                $passwordStmt = mysqli_prepare($this->db, $passwordQuery);
+                mysqli_stmt_bind_param($passwordStmt, "si", $hashedPassword, $userId);
+                mysqli_stmt_execute($passwordStmt);
+            }
+            
+            return $result;
+        }
+        
+        return false;
+    }
+
+    // Add method to verify current password
+    public function verifyCurrentPassword($userId, $currentPassword) {
+        $query = "SELECT password FROM users WHERE id = ?";
+        $stmt = mysqli_prepare($this->db, $query);
+        
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "i", $userId);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            $user = mysqli_fetch_assoc($result);
+            
+            if ($user && password_verify($currentPassword, $user['password'])) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
 }

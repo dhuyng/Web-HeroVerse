@@ -1,13 +1,17 @@
 <div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4 ">
+    <div class="card shadow-lg border-0 rounded-4">
         <div class="card-body p-4">
             <h3 class="card-title text-center mb-4 text-primary">Thông Tin Tài Khoản</h3>
 
             <!-- Form cập nhật thông tin -->
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="updateInfoForm">
                 <!-- Ảnh đại diện -->
                 <div class="form-group text-center mb-4">
-                    <img src="public/img/account-black.png" alt="User Avatar" id="userAvatar" class="rounded-circle border img-thumbnail shadow-lg mb-3" style="width: 150px; height: 150px;">
+                    <?php
+                    // If profile picture exists, display it, otherwise show a default image
+                    $profilePic = $_SESSION['user']['profile_pic'] ? 'public/img/' . $_SESSION['user']['profile_pic'] : 'public/img/account-black.png';
+                    ?>
+                    <img src="<?= $profilePic ?>" alt="User Avatar" id="userAvatar" class="rounded-circle border img-thumbnail shadow-lg mb-3" style="width: 150px; height: 150px;">
                     <div class="mt-2">
                         <input type="file" name="profile_pic" accept="image/*" class="form-control form-control-sm border-primary rounded-pill shadow-sm">
                         <small class="form-text text-muted">Chọn ảnh để thay đổi ảnh đại diện.</small>
@@ -16,49 +20,39 @@
 
                 <!-- Loại tài khoản -->
                 <div class="form-group mb-4 text-center">
-                    <span class="badge bg-gradient bg-success text-light fs-5 shadow">Tài Khoản: Pro</span>
+                    <span class="badge bg-gradient bg-success text-light fs-5 shadow">
+                        Tài Khoản: <?= ucfirst($_SESSION['user']['subscription_type']); ?>
+                    </span>
                 </div>
 
                 <!-- Hiển thị tên người dùng -->
                 <div class="form-group mb-4">
                     <label for="username" class="form-label fw-bold text-secondary">Tên Người Dùng</label>
-                    <input type="text" name="username" id="username" value="dragneel_user" class="form-control border-primary shadow-sm rounded-pill" placeholder="Nhập tên người dùng">
+                    <input type="text" name="username" id="username" value="<?= $_SESSION['user']['username']; ?>" class="form-control border-primary shadow-sm rounded-pill" placeholder="Nhập tên người dùng" readonly>
                 </div>
 
-                <!-- Đổi địa chỉ email -->
+                <!-- Địa chỉ email -->
                 <div class="form-group mb-4">
                     <label for="email" class="form-label fw-bold text-secondary">Địa Chỉ Email</label>
-                    <input type="email" name="email" id="email" value="user@example.com" class="form-control border-primary shadow-sm rounded-pill" placeholder="Nhập địa chỉ email">
-                </div>
-
-                <!-- Hiển thị mật khẩu hiện tại -->
-                <div class="form-group mb-4">
-                    <label for="currentPassword" class="form-label fw-bold text-secondary">Mật Khẩu Hiện Tại</label>
-                    <div class="input-group">
-                        <input type="password" id="currentPassword" value="123456" class="form-control border-primary shadow-sm rounded-pill" readonly>
-                        <button type="button" id="toggleCurrentPassword" class="btn btn-outline-secondary rounded-pill shadow-sm" style="margin-left: -45px; z-index: 1;">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                    </div>
+                    <input type="email" name="email" id="email" value="<?= $_SESSION['user']['email']; ?>" class="form-control border-primary shadow-sm rounded-pill" placeholder="Nhập địa chỉ email">
                 </div>
 
                 <!-- Đổi mật khẩu -->
                 <div class="form-group mb-4">
-                    <label for="password" class="form-label fw-bold text-secondary">Mật Khẩu Mới</label>
+                    <label for="newPassword" class="form-label fw-bold text-secondary">Mật Khẩu Mới</label>
                     <div class="input-group">
-                        <input type="password" name="password" id="password" class="form-control border-primary shadow-sm rounded-pill" placeholder="Nhập mật khẩu mới">
+                        <input type="password" name="newPassword" id="newPassword" class="form-control border-primary shadow-sm rounded-pill" placeholder="Nhập mật khẩu mới">
                         <button type="button" id="togglePassword" class="btn btn-outline-secondary rounded-pill shadow-sm" style="margin-left: -45px; z-index: 1;">
                             <i class="bi bi-eye"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Hiển thị số dư -->
+                <!-- Xác nhận mật khẩu mới -->
                 <div class="form-group mb-4">
-                    <label class="form-label fw-bold text-secondary">Số Dư Hiện Tại:</label>
-                    <div class="d-flex align-items-center mt-2">
-                        <span id="balance" class="fw-bold text-success me-2 fs-4">1000</span>
-                        <img src="public/img/coin.png" alt="Coin Icon" style="width: 32px; height: 32px;">
+                    <label for="confirmPassword" class="form-label fw-bold text-secondary">Xác Nhận Mật Khẩu Mới</label>
+                    <div class="input-group">
+                        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control border-primary shadow-sm rounded-pill" placeholder="Nhập lại mật khẩu mới">
                     </div>
                 </div>
 
@@ -66,25 +60,89 @@
                 <div class="form-group mb-4">
                     <label class="form-label fw-bold text-secondary">Bảo Mật Xác Thực Hai Yếu Tố (2FA)</label>
                     <div class="form-check form-switch">
-                        <input type="checkbox" class="form-check-input" id="2faToggle" name="2fa" checked>
+                        <input type="checkbox" class="form-check-input" id="2faToggle" name="2fa" <?= $_SESSION['user']['two_fa_enabled'] ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="2faToggle">Kích Hoạt 2FA</label>
                     </div>
                     <small class="form-text text-muted">Kích hoạt xác thực hai yếu tố để bảo vệ tài khoản tốt hơn.</small>
                 </div>
 
-                <!-- Đăng xuất khỏi thiết bị khác -->
-                <div class="form-group mb-4 text-center">
-                    <button type="button" class="btn btn-warning btn-sm shadow rounded-pill">Đăng Xuất Khỏi Tất Cả Thiết Bị</button>
-                </div>
-
                 <!-- Nút cập nhật thông tin -->
                 <div class="form-group text-center">
-                    <button type="submit" class="btn btn-primary btn-lg shadow-lg rounded-pill">Cập Nhật Thông Tin</button>
+                    <button type="button" id="updateInfoBtn" class="btn btn-primary btn-lg shadow-lg rounded-pill">Cập Nhật Thông Tin</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Modal for Current Password Verification -->
+<div class="modal fade" id="currentPasswordModal" tabindex="-1" aria-labelledby="currentPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="currentPasswordModalLabel">Xác Nhận Mật Khẩu Hiện Tại</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="currentPasswordInput">Mật Khẩu Hiện Tại</label>
+                    <input type="password" id="currentPasswordInput" class="form-control" placeholder="Nhập mật khẩu hiện tại">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" id="verifyPasswordBtn" class="btn btn-primary">Xác Nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Handle the form submission after verifying current password
+document.getElementById('updateInfoBtn').addEventListener('click', function() {
+    // Show the modal for current password verification
+    var modal = new bootstrap.Modal(document.getElementById('currentPasswordModal'));
+    modal.show();
+});
+
+// Verify password and submit form
+document.getElementById('verifyPasswordBtn').addEventListener('click', function () {
+    var currentPassword = document.getElementById('currentPasswordInput').value;
+    if (!currentPassword) {
+        alert('Vui lòng nhập mật khẩu hiện tại.');
+        return;
+    }
+
+    // Make an AJAX request to verify the current password
+    fetch('index.php?ajax=verifyCurrentPassword', {
+        method: 'POST',
+        body: JSON.stringify({ password: currentPassword }),
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'  // Indicate it's an AJAX request
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to verify the password.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            document.getElementById('updateInfoForm').submit();
+        } else {
+            alert('Mật khẩu hiện tại không đúng.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Đã xảy ra lỗi khi xác minh mật khẩu. Vui lòng thử lại sau.');
+    });
+});
+</script>
+
+
 
 <script>
     document.getElementById('togglePassword').addEventListener('click', function () {
@@ -103,19 +161,19 @@
         }
     });
 
-    document.getElementById('toggleCurrentPassword').addEventListener('click', function () {
-        const currentPasswordField = document.getElementById('currentPassword');
-        const currentPasswordFieldType = currentPasswordField.getAttribute('type');
-        const icon = this.querySelector('i');
+    // document.getElementById('toggleCurrentPassword').addEventListener('click', function () {
+    //     const currentPasswordField = document.getElementById('currentPassword');
+    //     const currentPasswordFieldType = currentPasswordField.getAttribute('type');
+    //     const icon = this.querySelector('i');
 
-        if (currentPasswordFieldType === 'password') {
-            currentPasswordField.setAttribute('type', 'text');
-            icon.classList.remove('bi-eye');
-            icon.classList.add('bi-eye-slash');
-        } else {
-            currentPasswordField.setAttribute('type', 'password');
-            icon.classList.remove('bi-eye-slash');
-            icon.classList.add('bi-eye');
-        }
-    });
+    //     if (currentPasswordFieldType === 'password') {
+    //         currentPasswordField.setAttribute('type', 'text');
+    //         icon.classList.remove('bi-eye');
+    //         icon.classList.add('bi-eye-slash');
+    //     } else {
+    //         currentPasswordField.setAttribute('type', 'password');
+    //         icon.classList.remove('bi-eye-slash');
+    //         icon.classList.add('bi-eye');
+    //     }
+    // });
 </script>

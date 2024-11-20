@@ -1,6 +1,13 @@
 <?php
 // index.php
 session_start();
+// Check if it's an AJAX request by looking for the 'ajax' query parameter or the X-Requested-With header
+$isAjaxRequest = isset($_GET['ajax']) || isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+if ($isAjaxRequest) {
+    // Redirect to the AJAX handler logic
+    include 'app/controllers/ajaxHandler.php';
+    exit();
+}
 echo '<pre>';
 print_r($_SESSION);
 echo '</pre>';
