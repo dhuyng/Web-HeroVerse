@@ -1,6 +1,9 @@
 <?php
 // index.php
 session_start();
+echo '<pre>';
+print_r($_SESSION);
+echo '</pre>';
 // Setting up the base URL dynamically
 $baseUrl = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/';
 ?>

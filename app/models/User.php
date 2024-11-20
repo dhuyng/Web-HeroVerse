@@ -23,7 +23,7 @@ class User {
     }
 
     // Login method
-    public function login($username, $password) {
+    public function login($username, $password): array | bool {
         $query = "SELECT * FROM users WHERE username = ? OR email = ?";
         $stmt = mysqli_prepare($this->db, $query);
 

@@ -40,7 +40,10 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
                 email VARCHAR(100) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
                 role ENUM('admin', 'member') DEFAULT 'member',
-                avatar VARCHAR(255) DEFAULT NULL,
+                subscription_type ENUM('basic', 'pro', 'premium') DEFAULT 'basic',
+                balance DECIMAL(10, 2) DEFAULT 0.00,
+                two_fa_enabled BOOLEAN DEFAULT FALSE,
+                profile_pic VARCHAR(255) DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             );
@@ -101,10 +104,16 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
         END;
         ",
         'insert_user' => "
-        CREATE PROCEDURE insert_user(IN username VARCHAR(50), IN email VARCHAR(100), IN password VARCHAR(255), IN role ENUM('admin', 'member'))
+        CREATE PROCEDURE insert_user(
+            IN username VARCHAR(50),
+            IN email VARCHAR(100),
+            IN password VARCHAR(255),
+            IN role ENUM('admin', 'member'),
+            IN subscription ENUM('basic', 'pro', 'premium')
+        )
         BEGIN
-            INSERT INTO users (username, email, password, role)
-            VALUES (username, email, password, role);
+            INSERT INTO users (username, email, password, role, subscription_type)
+            VALUES (username, email, password, role, subscription);
         END;
         "
     ];
@@ -134,12 +143,13 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
 
             // Iterate through CSV rows
             while (($data = fgetcsv($handle, 1000, ',')) !== FALSE) {
-                [$username, $email, $password, $role] = $data;
+                [$username, $email, $password, $role, $subscription] = $data;
 
                 // Kiểm tra trùng lặp username
                 $checkStmt = $mysqli->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
                 $checkStmt->bind_param("s", $username);
                 $checkStmt->execute();
+                $count = 0;
                 $checkStmt->bind_result($count);
                 $checkStmt->fetch();
                 $checkStmt->close();
@@ -147,8 +157,8 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
                 if ($count > 0) {
                     echo "User `$username` already exists, skipping insertion.<br>";
                 } else {
-                    if ($stmt = $mysqli->prepare("CALL insert_user(?, ?, ?, ?)")) {
-                        $stmt->bind_param("ssss", $username, $email, $password, $role);
+                    if ($stmt = $mysqli->prepare("CALL insert_user(?, ?, ?, ?, ?)")) {
+                        $stmt->bind_param("sssss", $username, $email, $password, $role, $subscription);
                         $stmt->execute();
                         $stmt->close();
                     } else {

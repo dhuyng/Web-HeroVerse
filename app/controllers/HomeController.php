@@ -39,15 +39,15 @@ class HomeController extends BaseController {
     }
 
     public function info() {
-        $this->render('user/info', 'Thông Tin Tài Khoản - HeroVerse');
+        $this->renderUser('info', 'Thông Tin Tài Khoản - HeroVerse');
     }
 
     public function balance() {
-        $this->render('user/balance', 'Nạp Số Dư - HeroVerse');
+        $this->renderUser('balance', 'Nạp Số Dư - HeroVerse');
     }
 
     public function history() {
-        $this->render('user/history', 'Lịch Sử Giao Dịch - HeroVerse');
+        $this->renderUser('history', 'Lịch Sử Giao Dịch - HeroVerse');
     }
 
     public function dragneel() {
