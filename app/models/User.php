@@ -119,4 +119,36 @@ class User {
         return false;
     }
 
+    public function getTransactionHistory($userId) {
+        $transactionHistory = [];
+    
+        // Fetch Recharge History
+        $rechargeQuery = "SELECT date, amount, coins, payment_method, status FROM recharge_history WHERE user_id = ? ORDER BY date DESC";
+        $stmt = mysqli_prepare($this->db, $rechargeQuery);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "i", $userId);
+            mysqli_stmt_execute($stmt);
+            $rechargeResult = mysqli_stmt_get_result($stmt);
+            $transactionHistory['recharges'] = mysqli_fetch_all($rechargeResult, MYSQLI_ASSOC);
+            mysqli_stmt_close($stmt);
+        } else {
+            $transactionHistory['recharges'] = [];
+        }
+    
+        // Fetch Usage History
+        $usageQuery = "SELECT date, coins_used, description FROM usage_history WHERE user_id = ? ORDER BY date DESC";
+        $stmt = mysqli_prepare($this->db, $usageQuery);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "i", $userId);
+            mysqli_stmt_execute($stmt);
+            $usageResult = mysqli_stmt_get_result($stmt);
+            $transactionHistory['usages'] = mysqli_fetch_all($usageResult, MYSQLI_ASSOC);
+            mysqli_stmt_close($stmt);
+        } else {
+            $transactionHistory['usages'] = [];
+        }
+    
+        return $transactionHistory;
+    }
+
 }

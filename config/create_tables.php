@@ -103,6 +103,34 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
             );
         END;
         ",
+        'create_recharge_history_table' => "
+        CREATE PROCEDURE create_recharge_history_table()
+        BEGIN
+            CREATE TABLE IF NOT EXISTS recharge_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                amount DECIMAL(10, 2) NOT NULL, -- Amount in the user's currency
+                coins INT NOT NULL, -- Coins received
+                payment_method ENUM('momo', 'zalopay', 'code') NOT NULL, -- Payment method
+                status ENUM('pending', 'completed', 'failed') DEFAULT 'pending', -- To track transaction state
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+        END;
+        ",
+        'create_usage_history_table' => "
+        CREATE PROCEDURE create_usage_history_table()
+        BEGIN
+            CREATE TABLE IF NOT EXISTS usage_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                coins_used INT NOT NULL, -- Coins spent
+                description TEXT NOT NULL, -- Description of the transaction
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+        END;
+        ",
         'insert_user' => "
         CREATE PROCEDURE insert_user(
             IN username VARCHAR(50),
@@ -124,7 +152,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
     }
 
     // Execute stored procedures to create tables
-    $tablesToCreate = ['create_users_table', 'create_heroes_table', 'create_comments_table', 'create_news_table', 'create_pages_table'];
+    $tablesToCreate = ['create_users_table', 'create_heroes_table', 'create_comments_table', 'create_news_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table'];
 
     foreach ($tablesToCreate as $procedureName) {
         if ($mysqli->query("CALL $procedureName()") === TRUE) {
@@ -133,6 +161,19 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
             echo "Error executing `$procedureName`: " . $mysqli->error . "<br>";
         }
     }
+
+    if ($mysqli->query("INSERT INTO `usage_history` (`id`, `user_id`, `date`, `coins_used`, `description`) VALUES ('1', '2', '02/11/2024', '10', 'Mua tướng Dragneel'), ('2', '2', '20/10/2024', '30', 'Nâng cấp tài khoản VIP'), ('3', '2', '15/10/2024', '5', 'Sử dụng dịch vụ hỗ trợ')") === TRUE) {
+        echo "Insert into usage_history successfully!<br>";
+    } else {
+        echo "Error executing insert into usage_history: " . $mysqli->error . "<br>";
+    }
+
+    if ($mysqli->query("INSERT INTO `recharge_history` (`id`, `user_id`, `date`, `amount`, `coins`, `payment_method`, `status`) VALUES ('1', '2', current_timestamp(), '20000', '20', 'momo', 'completed'), ('2', '2', current_timestamp(), '50000', '50', 'zalopay', 'pending'), ('3', '2', current_timestamp(), '100000', '100', 'code', 'failed')") === TRUE) {
+        echo "Insert into recharge_history successfully!<br>";
+    } else {
+        echo "Error executing insert into recharge_history: " . $mysqli->error . "<br>";
+    }
+
 
     // Function to load users from CSV using stored procedure
 // Function to load users from CSV using stored procedure

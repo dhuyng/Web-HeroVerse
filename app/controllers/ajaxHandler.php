@@ -18,6 +18,14 @@ switch ($ajaxAction) {
         $authController->updateAdminInfo();
             break;
 
+    case 'getTransactionHistory':
+        $authController->getTransactionHistory();
+            break;
+
+    case 'generate_qr':
+        $authController->generate_qr();
+            break;
+
     default:
         echo json_encode(['success' => false, 'message' => 'Invalid AJAX action']);
         break;

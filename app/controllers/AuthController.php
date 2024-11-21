@@ -235,4 +235,61 @@ class AuthController extends BaseController {
             exit;
         }
     }
+
+    public function getTransactionHistory() {
+        // Check if it's an AJAX request
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_SESSION['user']['id'])) {
+                echo json_encode(['success' => false, 'message' => 'User not logged in']);
+                return;
+            }
+            
+            $userId = $_SESSION['user']['id'];
+    
+            // Create the user model instance
+            $userModel = new User();
+    
+            // Fetch transaction history
+            $data = $userModel->getTransactionHistory($userId);
+    
+            // Return JSON response
+            if ($data) {
+                echo json_encode(['success' => true, 'data' => $data]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No transaction history found']);
+            }
+        } else {
+            // If not an AJAX request, return an error
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
+
+    public function generate_qr() {
+        // Check if it's an AJAX request
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $input = json_decode(file_get_contents('php://input'), true); // Get JSON payload
+            $method = $input['method'];
+            $price = $input['price'];
+    
+            require_once('public/lib/phpqrcode/phpqrcode.php');
+    
+            // Generate QR Code data (replace this with API data if needed)
+            $data = ($method === 'momo')
+                ? "https://momo.com/payment?amount=$price"
+                : "https://zalopay.com/payment?amount=$price";
+    
+            // Start output buffering to capture the image
+            ob_start();
+            QRcode::png($data); // Generate QR code image directly into the buffer
+            $imageData = base64_encode(ob_get_contents()); // Get buffered content and encode it in base64
+            ob_end_clean(); // Clean up the buffer
+    
+            // Respond with the base64 data
+            echo json_encode(['qrData' => 'data:image/png;base64,' . $imageData]);
+        } else {
+            // If not an AJAX request, return an error
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
+    
 }

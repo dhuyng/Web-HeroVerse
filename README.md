@@ -24,6 +24,42 @@ RewriteBase /your-subdirectory/
 ```
 Replace ```/your-subdirectory/``` with the actual path where your app is hosted (e.g., /BTL/HeroVerse/).
 
+### Enabling GD Library for QR Code Generation in XAMPP
+
+1. **Locate `php.ini`**:
+   - Go to `C:\xampp\php` and open `php.ini` in a text editor.
+
+2. **Enable GD extension**:
+   - Find `;extension=gd` and remove the semicolon to make it `extension=gd`.
+
+3. **Save the file** and **restart Apache**:
+   - Save the `php.ini` file and restart Apache via the XAMPP Control Panel.
+
+4. **Verify GD is enabled**:
+   - Create a PHP file with `phpinfo();` and check for `GD` in the output.
+
+This will enable QR code generation in your project.
+
+### Git Line Endings Setup
+
+To ensure consistent line endings across different systems, follow these steps:
+
+1. **Windows**:  
+   Run the following command:
+   ```bash
+   git config --global core.autocrlf true
+   ```
+2. **macOS/Linux**:  
+   Run the following command:
+   ```bash
+   git config --global core.autocrlf input
+   ```
+3. **Run `renormalize`**:  
+   After setting the above, execute:
+   ```bash
+   git add --renormalize .
+   ```
+
 ## Project structure
 
 ```

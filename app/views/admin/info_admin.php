@@ -10,7 +10,7 @@
                     <?php
                     // If profile picture exists, display it, otherwise show a default image
                     $profilePicPath = 'public/img/avatar/' . $_SESSION['user']['profile_pic'];
-                    $profilePicPath = file_exists($profilePicPath)  ? $profilePicPath : 'public/img/account-black.png';
+                    $profilePicPath = (file_exists($profilePicPath) && $_SESSION['user']['profile_pic'])  ? $profilePicPath : 'public/img/account-black.png';
                     ?>
                     <img src="<?= $profilePicPath ?>" alt="User Avatar" id="userAvatar" class="rounded-circle border img-thumbnail shadow-lg mb-3" style="width: 150px; height: 150px;">
                     <div class="mt-2">

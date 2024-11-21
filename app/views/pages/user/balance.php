@@ -133,6 +133,26 @@
             qrCode.style.display = 'block';
             alert('Quét QR để thanh toán ' + paymentMethod.textContent + '.');
         });
+
+        document.getElementById('confirmTransactionBtn').addEventListener('click', function() {
+            const price = document.querySelector('input[name="priceOption"]:checked').value;
+            const method = selectedMethod;
+
+            fetch('index.php?ajax=generate_qr', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ method, price })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const qrCodeImage = document.createElement('img');
+                    qrCodeImage.src = data.qrData;
+                    qrCodeImage.style.width = '200px';
+                    qrCode.innerHTML = ''; // Clear previous QR
+                    qrCode.appendChild(qrCodeImage);
+                    qrCode.style.display = 'block';
+                })
+                .catch(err => alert('Error generating QR code: ' + err));
+        });
     });
 </script>
-
