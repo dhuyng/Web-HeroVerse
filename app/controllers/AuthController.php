@@ -90,5 +90,149 @@ class AuthController extends BaseController {
             echo json_encode(['success' => false, 'message' => 'Invalid request']);
         }
     }
+
+    public function updateUserInfo() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+            $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+            $newPassword = $_POST['newPassword'] ?? null;
+            $confirmPassword = $_POST['confirmPassword'] ?? null;
+            $twoFA = isset($_POST['2fa']) ? 1 : 0;
+            $profilePic = $_FILES['profile_pic'] ?? null;
+
+            // Validate email
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $response['message'] = 'Địa chỉ email không hợp lệ.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate password
+            if ($newPassword && $newPassword !== $confirmPassword) {
+                $response['message'] = 'Mật khẩu mới và xác nhận mật khẩu không khớp.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Handle file upload
+            $uploadedFileName = null;
+            if ($profilePic && $profilePic['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = 'public/img/avatar/';
+                if (!is_dir($uploadDir)) {
+                    if (!mkdir($uploadDir, 0755, true)) {
+                        $response['message'] = 'Không thể tạo thư mục để tải ảnh lên.';
+                        echo json_encode($response);
+                        exit;
+                    }
+                }
+                $uploadedFileName = uniqid('profile_', true) . '.' . pathinfo($profilePic['name'], PATHINFO_EXTENSION);
+                $uploadFilePath = $uploadDir . $uploadedFileName;
+
+                if (!move_uploaded_file($profilePic['tmp_name'], $uploadFilePath)) {
+                    $response['message'] = 'Không thể tải lên ảnh đại diện.';
+                    echo json_encode($response);
+                    exit;
+                }
+                // Delete the old profile picture if exists
+                if (!empty($_SESSION['user']['profile_pic'])) {
+                    $oldFilePath = $uploadDir . $_SESSION['user']['profile_pic'];
+                    if (file_exists($oldFilePath)) {
+                        unlink($oldFilePath);
+                    }
+                }
+            } elseif ($profilePic && $profilePic['error'] !== UPLOAD_ERR_NO_FILE) {
+                $response['message'] = 'Có lỗi xảy ra khi tải lên ảnh đại diện.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Update user info
+            $userId = $_SESSION['user']['id']; 
+
+            $userModel = new User();
+            $updateSuccess = $userModel->updateUserInfo($userId, $email, $newPassword, $uploadedFileName, $twoFA);
+
+            if ($updateSuccess) {
+                // Update session data
+                $_SESSION['user']['email'] = $email;
+                $_SESSION['user']['profile_pic'] = $uploadedFileName ?: $_SESSION['user']['profile_pic'];
+                $_SESSION['user']['two_fa_enabled'] = $twoFA;
+
+                $response['success'] = true;
+                $response['message'] = 'Cập nhật thông tin thành công.';
+            } else {
+                $response['message'] = 'Cập nhật thông tin thất bại.';
+            }
+
+            echo json_encode($response);
+            exit;
+        }
+    }
     
+    public function updateAdminInfo() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+            $newPassword = $_POST['newPassword'] ?? null;
+            $confirmPassword = $_POST['confirmPassword'] ?? null;
+            $profilePic = $_FILES['profile_pic'] ?? null;
+
+            // Validate password
+            if ($newPassword && $newPassword !== $confirmPassword) {
+                $response['message'] = 'Mật khẩu mới và xác nhận mật khẩu không khớp.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Handle file upload
+            $uploadedFileName = null;
+            if ($profilePic && $profilePic['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = 'public/img/avatar/';
+                if (!is_dir($uploadDir)) {
+                    if (!mkdir($uploadDir, 0755, true)) {
+                        $response['message'] = 'Không thể tạo thư mục để tải ảnh lên.';
+                        echo json_encode($response);
+                        exit;
+                    }
+                }
+                $uploadedFileName = uniqid('profile_', true) . '.' . pathinfo($profilePic['name'], PATHINFO_EXTENSION);
+                $uploadFilePath = $uploadDir . $uploadedFileName;
+
+                if (!move_uploaded_file($profilePic['tmp_name'], $uploadFilePath)) {
+                    $response['message'] = 'Không thể tải lên ảnh đại diện.';
+                    echo json_encode($response);
+                    exit;
+                }
+                // Delete the old profile picture if exists
+                if (!empty($_SESSION['user']['profile_pic'])) {
+                    $oldFilePath = $uploadDir . $_SESSION['user']['profile_pic'];
+                    if (file_exists($oldFilePath)) {
+                        unlink($oldFilePath);
+                    }
+                }
+            } elseif ($profilePic && $profilePic['error'] !== UPLOAD_ERR_NO_FILE) {
+                $response['message'] = 'Có lỗi xảy ra khi tải lên ảnh đại diện.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Update user info
+            $userId = $_SESSION['user']['id']; 
+
+            $userModel = new User(); 
+            $updateSuccess = $userModel->updateAdminInfo($userId, $newPassword, $uploadedFileName);
+
+            if ($updateSuccess) {
+                // Update session data
+                $_SESSION['user']['profile_pic'] = $uploadedFileName ?: $_SESSION['user']['profile_pic'];
+
+                $response['success'] = true;
+                $response['message'] = 'Cập nhật thông tin thành công.';
+            } else {
+                $response['message'] = 'Cập nhật thông tin thất bại.';
+            }
+
+            echo json_encode($response);
+            exit;
+        }
+    }
 }

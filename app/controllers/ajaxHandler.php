@@ -9,6 +9,14 @@ switch ($ajaxAction) {
     case 'verifyCurrentPassword':
         $authController->verifyCurrentPassword();
             break;
+            
+    case 'updateUserInfo':
+        $authController->updateUserInfo();
+            break;
+            
+    case 'updateAdminInfo':
+        $authController->updateAdminInfo();
+            break;
 
     default:
         echo json_encode(['success' => false, 'message' => 'Invalid AJAX action']);

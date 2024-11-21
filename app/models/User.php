@@ -53,15 +53,15 @@ class User {
         return null;
     }
 
-    public function updateUserInfo($userId, $username, $email, $newPassword, $profilePic, $twoFA) {
-        $query = "UPDATE users SET username = ?, email = ?, profile_pic = ?, two_fa_enabled = ? WHERE id = ?";
-        
+    public function updateUserInfo($userId, $email, $newPassword = null, $profilePic, $twoFA) {
+        $query = "UPDATE users SET email = ?, profile_pic = ?, two_fa_enabled = ? WHERE id = ?";
+    
         $stmt = mysqli_prepare($this->db, $query);
-        
         if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "ssssi", $username, $email, $profilePic, $twoFA, $userId);
+            mysqli_stmt_bind_param($stmt, "sssi", $email, $profilePic, $twoFA, $userId);
             $result = mysqli_stmt_execute($stmt);
-            
+    
+            // Update password only if provided
             if ($newPassword) {
                 $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
                 $passwordQuery = "UPDATE users SET password = ? WHERE id = ?";
@@ -69,12 +69,36 @@ class User {
                 mysqli_stmt_bind_param($passwordStmt, "si", $hashedPassword, $userId);
                 mysqli_stmt_execute($passwordStmt);
             }
-            
+    
             return $result;
         }
-        
         return false;
     }
+
+    
+
+    public function updateAdminInfo($userId, $newPassword = null, $profilePic) {
+        $query = "UPDATE users SET profile_pic = ? WHERE id = ?";
+    
+        $stmt = mysqli_prepare($this->db, $query);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "si", $profilePic, $userId);
+            $result = mysqli_stmt_execute($stmt);
+    
+            // Update password only if provided
+            if ($newPassword) {
+                $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+                $passwordQuery = "UPDATE users SET password = ? WHERE id = ?";
+                $passwordStmt = mysqli_prepare($this->db, $passwordQuery);
+                mysqli_stmt_bind_param($passwordStmt, "si", $hashedPassword, $userId);
+                mysqli_stmt_execute($passwordStmt);
+            }
+    
+            return $result;
+        }
+        return false;
+    }
+    
 
     // Add method to verify current password
     public function verifyCurrentPassword($userId, $currentPassword) {

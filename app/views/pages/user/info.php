@@ -9,9 +9,10 @@
                 <div class="form-group text-center mb-4">
                     <?php
                     // If profile picture exists, display it, otherwise show a default image
-                    $profilePic = $_SESSION['user']['profile_pic'] ? 'public/img/' . $_SESSION['user']['profile_pic'] : 'public/img/account-black.png';
+                    $profilePicPath = 'public/img/avatar/' . $_SESSION['user']['profile_pic'];
+                    $profilePicPath = file_exists($profilePicPath)  ? $profilePicPath : 'public/img/account-black.png';
                     ?>
-                    <img src="<?= $profilePic ?>" alt="User Avatar" id="userAvatar" class="rounded-circle border img-thumbnail shadow-lg mb-3" style="width: 150px; height: 150px;">
+                    <img src="<?= $profilePicPath ?>" alt="User Avatar" id="userAvatar" class="rounded-circle border img-thumbnail shadow-lg mb-3" style="width: 150px; height: 150px;">
                     <div class="mt-2">
                         <input type="file" name="profile_pic" accept="image/*" class="form-control form-control-sm border-primary rounded-pill shadow-sm">
                         <small class="form-text text-muted">Chọn ảnh để thay đổi ảnh đại diện.</small>
@@ -42,7 +43,7 @@
                     <label for="newPassword" class="form-label fw-bold text-secondary">Mật Khẩu Mới</label>
                     <div class="input-group">
                         <input type="password" name="newPassword" id="newPassword" class="form-control border-primary shadow-sm rounded-pill" placeholder="Nhập mật khẩu mới">
-                        <button type="button" id="togglePassword" class="btn btn-outline-secondary rounded-pill shadow-sm" style="margin-left: -45px; z-index: 1;">
+                        <button type="button" id="toggleNewPassword" class="btn btn-outline-secondary rounded-pill shadow-sm" style="margin-left: -45px; z-index: 1;">
                             <i class="bi bi-eye"></i>
                         </button>
                     </div>
@@ -53,6 +54,9 @@
                     <label for="confirmPassword" class="form-label fw-bold text-secondary">Xác Nhận Mật Khẩu Mới</label>
                     <div class="input-group">
                         <input type="password" name="confirmPassword" id="confirmPassword" class="form-control border-primary shadow-sm rounded-pill" placeholder="Nhập lại mật khẩu mới">
+                        <button type="button" id="toggleConfirmPassword" class="btn btn-outline-secondary rounded-pill shadow-sm" style="margin-left: -45px; z-index: 1;">
+                            <i class="bi bi-eye"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -70,6 +74,8 @@
                 <div class="form-group text-center">
                     <button type="button" id="updateInfoBtn" class="btn btn-primary btn-lg shadow-lg rounded-pill">Cập Nhật Thông Tin</button>
                 </div>
+
+                <div id="errorMessages" class="mt-3"></div>
             </form>
         </div>
     </div>
@@ -88,6 +94,7 @@
                     <label for="currentPasswordInput">Mật Khẩu Hiện Tại</label>
                     <input type="password" id="currentPasswordInput" class="form-control" placeholder="Nhập mật khẩu hiện tại">
                 </div>
+                <div id="modalErrorMessages" class="mt-3"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -98,55 +105,159 @@
 </div>
 
 <script>
-// Handle the form submission after verifying current password
-document.getElementById('updateInfoBtn').addEventListener('click', function() {
-    // Show the modal for current password verification
-    var modal = new bootstrap.Modal(document.getElementById('currentPasswordModal'));
-    modal.show();
+let modal;
+document.addEventListener('DOMContentLoaded', function () {
+    modal = new bootstrap.Modal(document.getElementById('currentPasswordModal'));
 });
+document.getElementById('updateInfoBtn').addEventListener('click', function () {
+    const emailField = document.getElementById('email');
+    const newPasswordField = document.getElementById('newPassword');
+    const confirmPasswordField = document.getElementById('confirmPassword');
+    const errorMessageContainer = document.getElementById('errorMessages');
 
-// Verify password and submit form
-document.getElementById('verifyPasswordBtn').addEventListener('click', function () {
-    var currentPassword = document.getElementById('currentPasswordInput').value;
-    if (!currentPassword) {
-        alert('Vui lòng nhập mật khẩu hiện tại.');
-        return;
+    // Clear previous error messages
+    errorMessageContainer.innerHTML = '';
+
+    let hasError = false;
+
+    // Validate email format
+    const email = emailField.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        const error = document.createElement('p');
+        error.classList.add('text-danger');
+        error.textContent = 'Email không đúng định dạng.';
+        errorMessageContainer.appendChild(error);
+        hasError = true;
     }
 
-    // Make an AJAX request to verify the current password
+    // Validate new password and confirmation
+    const newPassword = newPasswordField.value.trim();
+    const confirmPassword = confirmPasswordField.value.trim();
+    if (newPassword || confirmPassword) {
+        if (newPassword.length < 4 || newPassword.length > 20) {
+            const error = document.createElement('p');
+            error.classList.add('text-danger');
+            error.textContent = 'Mật khẩu mới phải từ 4-20 ký tự.';
+            errorMessageContainer.appendChild(error);
+            hasError = true;
+        }
+        if (newPassword !== confirmPassword) {
+            const error = document.createElement('p');
+            error.classList.add('text-danger');
+            error.textContent = 'Mật khẩu mới và xác nhận không khớp.';
+            errorMessageContainer.appendChild(error);
+            hasError = true;
+        }
+    }
+
+    // If no errors, show the modal
+    if (!hasError) {
+        modal.show();
+    }
+});
+
+document.getElementById('verifyPasswordBtn').addEventListener('click', function () {
+    const currentPasswordInput = document.getElementById('currentPasswordInput');
+    const currentPassword = currentPasswordInput.value.trim();
+    const errorMessageContainer = document.getElementById('modalErrorMessages');
+
+    // Clear previous error messages
+    errorMessageContainer.innerHTML = '';
+
+    if (!currentPassword) {
+        const error = document.createElement('p');
+        error.classList.add('text-danger');
+        error.textContent = 'Vui lòng nhập mật khẩu hiện tại.';
+        errorMessageContainer.appendChild(error);
+        return;
+    }
+    
+    // Verify password via AJAX
     fetch('index.php?ajax=verifyCurrentPassword', {
         method: 'POST',
         body: JSON.stringify({ password: currentPassword }),
-        headers: { 
+        headers: {
             'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'  // Indicate it's an AJAX request
+            'X-Requested-With': 'XMLHttpRequest'
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to verify the password.');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            document.getElementById('updateInfoForm').submit();
-        } else {
-            alert('Mật khẩu hiện tại không đúng.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Đã xảy ra lỗi khi xác minh mật khẩu. Vui lòng thử lại sau.');
-    });
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to verify password.');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                submitForm();
+                modal.hide();
+            } else {
+                const error = document.createElement('p');
+                error.classList.add('text-danger');
+                error.textContent = 'Mật khẩu hiện tại không đúng.';
+                errorMessageContainer.appendChild(error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const errorMessage = document.createElement('p');
+            errorMessage.classList.add('text-danger');
+            errorMessage.textContent = 'Đã xảy ra lỗi khi xác minh mật khẩu. Vui lòng thử lại sau.';
+            errorMessageContainer.appendChild(errorMessage);
+        });
 });
+
+function submitForm() {
+    const form = document.getElementById("updateInfoForm");
+    const formData = new FormData(form);
+
+    fetch("index.php?ajax=updateUserInfo", {
+        method: "POST",
+        body: formData,
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            const errorMessagesDiv = document.getElementById("errorMessages");
+            errorMessagesDiv.innerHTML = ""; // Clear previous messages
+
+            if (data.success) {
+                errorMessagesDiv.innerHTML = `
+                    <div class="alert alert-success" role="alert">
+                        ${data.message}
+                    </div>
+                `;
+                const reloadMessage = document.createElement('div');
+                reloadMessage.classList.add('alert', 'alert-info');
+                reloadMessage.textContent = 'Trang sẽ tự động tải lại trong 3 giây...';
+                errorMessagesDiv.appendChild(reloadMessage);
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            } else {
+                errorMessagesDiv.innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        ${data.message}
+                    </div>
+                `;
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            const errorMessagesDiv = document.getElementById("errorMessages");
+            errorMessagesDiv.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    Có lỗi xảy ra. Vui lòng thử lại sau.
+                </div>
+            `;
+        });
+}
 </script>
 
 
 
 <script>
-    document.getElementById('togglePassword').addEventListener('click', function () {
-        const passwordField = document.getElementById('password');
+    function setupPasswordToggle(buttonId, fieldId) {
+    document.getElementById(buttonId).addEventListener('click', function () {
+        const passwordField = document.getElementById(fieldId);
         const passwordFieldType = passwordField.getAttribute('type');
         const icon = this.querySelector('i');
 
@@ -160,20 +271,9 @@ document.getElementById('verifyPasswordBtn').addEventListener('click', function 
             icon.classList.add('bi-eye');
         }
     });
+}
 
-    // document.getElementById('toggleCurrentPassword').addEventListener('click', function () {
-    //     const currentPasswordField = document.getElementById('currentPassword');
-    //     const currentPasswordFieldType = currentPasswordField.getAttribute('type');
-    //     const icon = this.querySelector('i');
+setupPasswordToggle('toggleNewPassword', 'newPassword');
+setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');
 
-    //     if (currentPasswordFieldType === 'password') {
-    //         currentPasswordField.setAttribute('type', 'text');
-    //         icon.classList.remove('bi-eye');
-    //         icon.classList.add('bi-eye-slash');
-    //     } else {
-    //         currentPasswordField.setAttribute('type', 'password');
-    //         icon.classList.remove('bi-eye-slash');
-    //         icon.classList.add('bi-eye');
-    //     }
-    // });
 </script>
