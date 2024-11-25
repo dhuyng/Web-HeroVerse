@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /public/
+
+Disallow: /admin/
+Disallow: /user/
+
+# Sitemap
+Sitemap: http://localhost/heroverse/sitemap.xml

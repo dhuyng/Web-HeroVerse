@@ -5,7 +5,8 @@
     <title><?php echo isset($title) ? $title : 'HeroVerse'; ?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta name="description" content="Welcome to HeroVerse">
-    <meta name="keywords" content="HeroVerse, About, GamePlay, Event, Contact">
+    <meta name="keywords" content="HeroVerse, Game, GamePlay, Heroes, GameOnline">
+    <meta name="author" content="HeroVerse Team">
 
 
 
