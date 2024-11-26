@@ -66,6 +66,9 @@ switch ($url) {
     case 'balance':
         $controller->balance();
         break;
+    case 'paymentResult':
+        $controller->paymentResult();
+        break;
     case 'history':
         $controller->history();
         break;

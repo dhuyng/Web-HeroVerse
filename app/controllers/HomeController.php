@@ -46,6 +46,10 @@ class HomeController extends BaseController {
         $this->renderUser('balance', 'Nạp Số Dư - HeroVerse');
     }
 
+    public function paymentResult() {
+        $this->renderUser('paymentResult', 'Kết quả giao dịch - HeroVerse');
+    }
+
     public function history() {
         $this->renderUser('history', 'Lịch Sử Giao Dịch - HeroVerse');
     }

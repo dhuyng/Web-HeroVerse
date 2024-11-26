@@ -74,7 +74,7 @@
                     <p><strong>Sản phẩm được chọn:</strong> <span id="selectedCoins">0 Coin</span></p>
                     <p><strong>Phương thức thanh toán:</strong> <span id="paymentMethod"></span></p>
                     <p><strong>Giá:</strong> <span id="paymentPrice"></span> VNĐ</p>
-                    <p><strong>Username:</strong> dragneel_user</p>
+                    <p><strong>Username:</strong> <?=$_SESSION['user']['username']?></p>
                     <div class="text-center">
                         <button type="button" class="btn btn-success" id="confirmTransactionBtn">Xác Nhận Thanh Toán</button>
                     </div>
@@ -131,7 +131,29 @@
 
         document.getElementById('confirmTransactionBtn').addEventListener('click', function() {
             qrCode.style.display = 'block';
-            alert('Quét QR để thanh toán ' + paymentMethod.textContent + '.');
+            const selectedAmount = document.querySelector('input[name="priceOption"]:checked').value;
+            const transactionData = {
+                amount: selectedAmount,
+                orderInfo: 'Cong mot ten lua',
+                paymentMethod: selectedMethod
+            };
+            fetch('index.php?ajax=confirmTransaction', {
+                method : 'POST',
+                headers : { 'Content-Type' : 'application/json' },
+                body: JSON.stringify(transactionData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert('Error:' + data.message);
+                    }
+                    if (data.payUrl) window.location.href = data.payUrl;
+                    else alert('Error initiating payment: ' + data.payUrl) ;
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('An unexpected error occured. Please try again.');
+                });
         });
 
         document.getElementById('confirmTransactionBtn').addEventListener('click', function() {
