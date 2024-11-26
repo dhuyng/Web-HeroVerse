@@ -291,5 +291,139 @@ class AuthController extends BaseController {
             echo json_encode(['success' => false, 'message' => 'Invalid request']);
         }
     }
+    public function userManager() {
+        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userModel = new User();
+            $users = $userModel->getAllUsers();
+            if($users) {
+                echo json_encode(['success' => true, 'data' => $users]);
+            }
+            else{
+                echo json_encode(['success' => false, 'message' => 'Error fetching users']);
+            }
+            
+        }
+        else {
+        
+        echo json_encode(['success' => false, 'message' => 'Invalid request']);
+    }
+    
+}
+
+    public function getAllSupports() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userModel = new User();
+            $supports = $userModel->getAllSupports();
+            if ($supports) {
+                echo json_encode(['success' => true, 'data' => $supports]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error fetching support requests']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }   
+    }
+
+    public function deleteUser() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+
+
+            // Get the current password from the request payload (JSON)
+            $data = json_decode(file_get_contents("php://input"), true);
+            $userId = $data['id'];
+            error_log('-------------POST: ' . print_r($_POST, true));
+            error_log('-------------User ID: ' . $userId);
+
+            if (!$userId) {
+                $response['message'] = 'User ID is required.';
+                echo json_encode($response);
+                exit;
+            }
+
+            $userModel = new User();
+            $deleteSuccess = $userModel->deleteUser($userId);
+
+            if ($deleteSuccess) {
+                $response['success'] = true;
+                $response['message'] = 'User deleted successfully.';
+            } else {
+                $response['message'] = 'Failed to delete user.';
+            }
+
+            echo json_encode($response);
+            exit;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
+
+    public function deleteSupport() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+
+            // Get the support ID from the request payload (JSON)
+            $data = json_decode(file_get_contents("php://input"), true);
+            $supportId = $data['id'];
+
+
+            if (!$supportId) {
+                $response['message'] = 'Support ID is required.';
+                echo json_encode($response);
+                exit;
+            }
+
+            $userModel = new User();
+            $deleteSuccess = $userModel->deleteSupport($supportId);
+
+            if ($deleteSuccess) {
+                $response['success'] = true;
+                $response['message'] = 'Support request deleted successfully.';
+            } else {
+                $response['message'] = 'Failed to delete support request.';
+            }
+
+            echo json_encode($response);
+            exit;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
+
+    public function toggleSupportStatus(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+
+
+
+            // Get the support ID from the request payload (JSON)
+            $data = json_decode(file_get_contents("php://input"), true);
+            $supportId = $data['id'];
+
+
+            if (!$supportId) {
+                $response['message'] = 'Support ID is required.';
+                echo json_encode($response);
+                exit;
+            }
+
+            $userModel = new User();
+            $toggleSuccess = $userModel->toggleSupportStatus($supportId);
+
+            error_log('-------------toggleSuccess: ' . $toggleSuccess);
+
+            if ($toggleSuccess) {
+                $response['success'] = true;
+                $response['message'] = 'Support request status updated successfully.';
+            } else {
+                $response['message'] = 'Failed to update support request status.';
+            }
+
+            echo json_encode($response);
+            exit;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
     
 }

@@ -151,4 +151,109 @@ class User {
         return $transactionHistory;
     }
 
+        // Get all users
+        public function getAllUsers(): array | bool {
+            $query = "SELECT id, username, email, role FROM users";
+            
+            try {
+                $stmt = mysqli_prepare($this->db, $query);
+        
+                if (!$stmt) {
+                    throw new Exception("Failed to prepare statement: " . mysqli_error($this->db));
+                }
+        
+                if (!mysqli_stmt_execute($stmt)) {
+                    throw new Exception("Failed to execute statement: " . mysqli_error($this->db));
+                }
+        
+                $result = mysqli_stmt_get_result($stmt);
+                if (!$result) {
+                    throw new Exception("Failed to fetch results: " . mysqli_error($this->db));
+                }
+        
+                $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    
+                mysqli_stmt_close($stmt); // Close statement to release resources
+                
+                return $users;
+            } catch (Exception $e) {
+                error_log($e->getMessage()); // Log error for debugging
+                return false; // Return false to indicate failure
+            }
+        }
+
+        public function getAllSupports() {
+            $query = "SELECT support.id, users.username, users.email, support.title, support.question, support.is_processed FROM support INNER JOIN users ON support.user_id = users.id";
+        $stmt = mysqli_prepare($this->db, $query);
+    
+        try {
+            if (!$stmt) {
+                throw new Exception("Failed to prepare statement: " . mysqli_error($this->db));
+            }
+    
+            if (!mysqli_stmt_execute($stmt)) {
+                throw new Exception("Failed to execute statement: " . mysqli_error($this->db));
+            }
+    
+            $result = mysqli_stmt_get_result($stmt);
+            if (!$result) {
+                throw new Exception("Failed to fetch results: " . mysqli_error($this->db));
+            }
+    
+            $supports = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    
+            mysqli_stmt_close($stmt); // Close statement to release resources
+    
+            return $supports;
+        } catch (Exception $e) {
+            error_log($e->getMessage()); // Log error for debugging
+            return false; // Return false to indicate failure
+        }
+    
+    }
+    
+    
+    public function deleteUser($userId) {
+        $query = "DELETE FROM users WHERE id = ?";
+        $stmt = mysqli_prepare($this->db, $query);
+    
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "i", $userId);
+            if (mysqli_stmt_execute($stmt)) {
+                return true; // Successfully deleted user and related records
+            }
+        }
+    
+        // Log error if needed
+        error_log("Failed to delete user with ID $userId: " . mysqli_error($this->db));
+    
+        return false;
+    }
+    
+    
+    public function deleteSupport($supportId) {
+        $query = "DELETE FROM support WHERE id = ?";
+        $stmt = mysqli_prepare($this->db, $query);
+    
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "i", $supportId);
+            return mysqli_stmt_execute($stmt);
+        }
+    
+        return false;
+    }
+    
+    public function toggleSupportStatus($supportId) {
+        // Query to toggle the is_processed field
+        $query = "UPDATE support SET is_processed = NOT is_processed WHERE id = ?";
+        $stmt = mysqli_prepare($this->db, $query);
+    
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "i", $supportId);
+            return mysqli_stmt_execute($stmt);
+        }
+    
+        return false;
+    }  
+
 }

@@ -38,6 +38,27 @@ switch ($ajaxAction) {
     case 'zaloPayGatewayCallbackHandler':
         $transactionController->zaloPayGatewayCallbackHandler();
         break;
+    case 'getAllUsers':
+        $authController->userManager();
+            break;
+
+    case 'getAllSupports':
+        $authController->getAllSupports();
+            break;
+
+    case 'deleteUser':
+        $authController->deleteUser();
+            break;
+    
+    case 'deleteSupport':
+        $authController->deleteSupport();
+            break;
+
+    case 'toggleSupportStatus':
+        error_log('toggleSupportStatus');
+        $authController->toggleSupportStatus();
+            break;
+    
         
     default:
         echo json_encode(['success' => false, 'message' => 'Invalid AJAX action']);
