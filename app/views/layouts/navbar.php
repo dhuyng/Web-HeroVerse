@@ -45,7 +45,8 @@ $isAdmin = isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'; //
                     <!-- Admin Navigation -->
                     <li class="nav-item fw-bold"><a class="nav-link" href="dashboard">Dashboard</a></li>
                     <li class="nav-item fw-bold"><a class="nav-link" href="user_mgmt">User Mgmt</a></li>
-                    <li class="nav-item fw-bold"><a class="nav-link" href="content_mgmt">Content Mgmt</a></li>
+                    <li class="nav-item fw-bold"><a class="nav-link" href="gameplay_mgmt">GamePlay Mgmt</a></li>
+                    <li class="nav-item fw-bold"><a class="nav-link" href="event_mgmt">Event Mgmt</a></li>
                     <li class="nav-item fw-bold"><a class="nav-link" href="support">Support</a></li>
                 <?php endif; ?>
             </ul>

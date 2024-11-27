@@ -54,12 +54,24 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
         BEGIN
             CREATE TABLE IF NOT EXISTS heroes (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(100) NOT NULL,
-                description TEXT NOT NULL,
-                image VARCHAR(255) DEFAULT NULL,
-                type VARCHAR(50) NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                name VARCHAR(255) NOT NULL,
+                price DECIMAL(10, 2) NOT NULL,          
+                type ENUM('dark', 'light') NOT NULL,  
+                image VARCHAR(255) NOT NULL,          
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  
+            );
+        END;
+        ",
+        'create_map_table' => "
+        CREATE PROCEDURE create_map_table()
+        BEGIN
+            CREATE TABLE IF NOT EXISTS map (
+                id INT AUTO_INCREMENT PRIMARY KEY,         
+                name VARCHAR(255) NOT NULL,                 
+                image VARCHAR(255) NOT NULL,               
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  
             );
         END;
         ",
@@ -152,7 +164,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
     }
 
     // Execute stored procedures to create tables
-    $tablesToCreate = ['create_users_table', 'create_heroes_table', 'create_comments_table', 'create_news_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table'];
+    $tablesToCreate = ['create_users_table', 'create_heroes_table','create_map_table', 'create_comments_table', 'create_news_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table'];
 
     foreach ($tablesToCreate as $procedureName) {
         if ($mysqli->query("CALL $procedureName()") === TRUE) {

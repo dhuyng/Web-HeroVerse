@@ -73,7 +73,7 @@ switch ($url) {
         $authController->logout();
         break;
 
-    case 'dragneel':
+    case 'Dragneel':
         $controller->dragneel();
         break;
 
@@ -81,8 +81,12 @@ switch ($url) {
         $controller->dashboard();
         break;
 
-    case 'content_mgmt':
-        $controller->content_mgmt();
+    case 'gameplay_mgmt':
+        $controller->gameplay_mgmt();
+        break;
+
+    case 'event_mgmt':
+        $controller->event_mgmt();
         break;
 
     case 'user_mgmt':
