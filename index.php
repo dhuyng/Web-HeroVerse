@@ -9,7 +9,7 @@ if ($isAjaxRequest) {
     exit();
 }
 echo '<pre>';
-print_r($_SESSION);
+// print_r($_SESSION);
 echo '</pre>';
 // Setting up the base URL dynamically
 $baseUrl = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/';
@@ -27,7 +27,7 @@ $baseUrl = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '
 // Gọi controller chính
 require_once 'app/controllers/HomeController.php';
 require_once 'app/controllers/AuthController.php';
-require_once 'config/create_tables.php';
+// require_once 'config/create_tables.php';
 $url = $_GET['url'] ?? 'home'; // Lấy URL hoặc mặc định là 'home'
 
 $controller = new HomeController();
@@ -76,7 +76,7 @@ switch ($url) {
         $authController->logout();
         break;
 
-    case 'dragneel':
+    case 'Dragneel':
         $controller->dragneel();
         break;
 
@@ -84,8 +84,12 @@ switch ($url) {
         $controller->dashboard();
         break;
 
-    case 'content_mgmt':
-        $controller->content_mgmt();
+    case 'gameplay_mgmt':
+        $controller->gameplay_mgmt();
+        break;
+
+    case 'event_mgmt':
+        $controller->event_mgmt();
         break;
 
     case 'user_mgmt':

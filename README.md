@@ -108,15 +108,16 @@ This document provides an overview of the database schema for the application. I
 
 ### 2. `heroes` Table
 
-| Column       | Type            | Constraints                | Description                       |
-|--------------|-----------------|----------------------------|-----------------------------------|
-| `id`         | INT             | PRIMARY KEY, AUTO_INCREMENT | Unique ID for each hero.          |
-| `name`       | VARCHAR(100)    | NOT NULL                    | Hero name.                        |
-| `description`| TEXT            | NOT NULL                    | Detailed hero description.        |
-| `image`      | VARCHAR(255)    | NULL                        | Path to hero image.               |
-| `type`       | VARCHAR(50)     | NOT NULL                    | Hero type/class (e.g., Warrior).  |
-| `created_at` | TIMESTAMP       | DEFAULT CURRENT_TIMESTAMP   | Entry creation date.              |
-| `updated_at` | TIMESTAMP       | ON UPDATE CURRENT_TIMESTAMP | Last update date.                 |
+| Column       | Type            | Constraints                                | Description                                    |
+|--------------|-----------------|--------------------------------------------|------------------------------------------------|
+| `id`         | `INT`           | `PRIMARY KEY, AUTO_INCREMENT`              | Unique ID for each hero.                       |
+| `name`       | `VARCHAR(255)`  | `NOT NULL`                                 | Hero name.                                     |
+| `price`      | `DECIMAL(10, 2)`| `NOT NULL`                                 | Price of the hero (stored as a decimal number).|
+| `type`       | `ENUM('dark', 'light')` | `NOT NULL`                              | Hero type (e.g., Dark or Light).          |
+| `image`      | `VARCHAR(255)`  | `NOT NULL`                                 | Path to the hero's image.                      |
+| `created_at` | `TIMESTAMP`     | `DEFAULT CURRENT_TIMESTAMP`                | Entry creation date.                           |
+| `updated_at` | `TIMESTAMP`     | `DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | Last update date.                 |
+
 
 ### 3. `comments` Table
 
@@ -150,3 +151,19 @@ This document provides an overview of the database schema for the application. I
 | `content`    | TEXT            | NOT NULL                    | Page content (HTML or Markdown).  |
 | `created_at` | TIMESTAMP       | DEFAULT CURRENT_TIMESTAMP   | Page creation date.               |
 | `updated_at` | TIMESTAMP       | ON UPDATE CURRENT_TIMESTAMP | Last update date.                 |
+
+
+### 6. `map` Table
+| Column       | Type            | Constraints                                | Description                                    |
+|--------------|-----------------|--------------------------------------------|------------------------------------------------|
+| `id`         | `INT`           | `PRIMARY KEY, AUTO_INCREMENT`              | Unique ID for each map.                        |
+| `name`       | `VARCHAR(255)`  | `NOT NULL`                                 | Name of the map.                               |
+| `image`      | `VARCHAR(255)`  | `NULL`                                     | Path to the map's image.                       |
+| `created_at` | `TIMESTAMP`     | `DEFAULT CURRENT_TIMESTAMP`                | Entry creation date.                           |
+| `updated_at` | `TIMESTAMP`     | `DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | Last update date.                 |
+
+## Payment Credit Cards Test Details
+### Momo
+ATM Cards Test Details: https://developers.momo.vn/v3/docs/payment/onboarding/test-instructions/#atm-cards-test-details
+### ZaloPay
+Bank card information for Portal Payment: https://docs.zalopay.vn/en/v2/start/#A-III

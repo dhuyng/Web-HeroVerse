@@ -62,8 +62,12 @@ class HomeController extends BaseController {
         $this->renderAdmin('dashboard', 'Dashboard - HeroVerse');
     }
 
-    public function content_mgmt() {
-        $this->renderAdmin('content_mgmt', 'Content Management - HeroVerse');
+    public function gameplay_mgmt() {
+        $this->renderAdmin('gameplay_mgmt', 'Gameplay Management - HeroVerse');
+    }
+
+    public function event_mgmt() {
+        $this->renderAdmin('event_mgmt', 'Event Management - HeroVerse');
     }
 
     public function user_mgmt() {
