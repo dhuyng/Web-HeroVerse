@@ -146,6 +146,23 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
             VALUES (username, email, password, role, subscription);
         END;
         "
+
+        ,
+        'create_support_table' => "
+        CREATE PROCEDURE create_support_table()
+        BEGIN
+            CREATE TABLE IF NOT EXISTS support (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                title VARCHAR(200) NOT NULL,
+                question TEXT NOT NULL,
+                answer TEXT DEFAULT NULL,
+                is_processed BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            );
+        END;"
     ];
 
     // Create all stored procedures
@@ -154,7 +171,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
     }
 
     // Execute stored procedures to create tables
-    $tablesToCreate = ['create_users_table', 'create_heroes_table', 'create_comments_table', 'create_news_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table'];
+    $tablesToCreate = ['create_users_table', 'create_heroes_table', 'create_comments_table', 'create_news_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table', 'create_support_table'];
 
     foreach ($tablesToCreate as $procedureName) {
         if ($mysqli->query("CALL $procedureName()") === TRUE) {
@@ -174,6 +191,13 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
         echo "Insert into recharge_history successfully!<br>";
     } else {
         echo "Error executing insert into recharge_history: " . $mysqli->error . "<br>";
+    }
+
+    
+    if ($mysqli->query("INSERT INTO `support` (`id`, `user_id`, `title`, `question`, `answer`, `is_processed`) VALUES ('1', '2', 'Hỗ trợ tài khoản', 'Tôi không thể đăng nhập vào tài khoản của mình. Xin hãy giúp đỡ!', NULL, '1'), ('2', '2', 'Hỗ trợ nạp tiền', 'Tôi đã nạp tiền nhưng không nhận được Coin. Xin hãy giúp đỡ!', NULL, '0'), ('3', '1', 'Hỗ trợ dịch vụ', 'Tôi muốn nâng cấp tài khoản VIP. Xin hãy giúp đỡ!', NULL, '1')") === TRUE) {
+        echo "Insert into support successfully!<br>";
+    } else {
+        echo "Error executing insert into support: " . $mysqli->error . "<br>";
     }
 
 
