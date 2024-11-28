@@ -123,7 +123,7 @@ class User {
         $transactionHistory = [];
     
         // Fetch Recharge History
-        $rechargeQuery = "SELECT date, amount, coins, payment_method, status FROM recharge_history WHERE user_id = ? ORDER BY date DESC";
+        $rechargeQuery = "SELECT id, orderId, date, amount, coins, payment_method, status, description FROM recharge_history WHERE user_id = ? ORDER BY date DESC";
         $stmt = mysqli_prepare($this->db, $rechargeQuery);
         if ($stmt) {
             mysqli_stmt_bind_param($stmt, "i", $userId);
@@ -150,5 +150,128 @@ class User {
     
         return $transactionHistory;
     }
+
+    public function insertRechargeHistory($userId, $orderId, $amount, $coins, $paymentMethod, $description = '', $status = 'pending'): bool {
+        $queryUser = "SELECT username FROM users WHERE id = ?";
+        $stmtUser = mysqli_prepare($this->db, $queryUser);
+    
+        if (!$stmtUser) {
+            error_log("Error preparing user query: " . mysqli_error($this->db));
+            return false;
+        }
+        mysqli_stmt_bind_param($stmtUser, "i", $userId);
+        if (!mysqli_stmt_execute($stmtUser)) {
+            // error_log("Error executing user query: " . mysqli_stmt_error($stmtUser));
+            return false;
+        }
+        $resultUser = mysqli_stmt_get_result($stmtUser);
+        $user = mysqli_fetch_assoc($resultUser);
+        if (!$user) {
+            error_log("User not found for ID: " . $userId);
+            return false;
+        }
+        $orderId = $orderId ?? $user['username'] . "_" . time();
+        $query = "INSERT INTO recharge_history (user_id, orderId, amount, coins, payment_method, status, description) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($this->db, $query);
+        if (!$stmt) {
+            error_log("Error preparing insert query: " . mysqli_error($this->db));
+            return false;
+        }
+        mysqli_stmt_bind_param($stmt, "isdssss", $userId, $orderId, $amount, $coins, $paymentMethod, $status, $description);
+        if (!mysqli_stmt_execute($stmt)) {
+            error_log("Error executing insert query: " . mysqli_stmt_error($stmt));
+            return false;
+        }
+    
+        return true;
+    }
+    
+
+    public function updateUserBalance($userId, $amount) {
+        $sql = "UPDATE users SET balance = balance + ? WHERE id = ?";
+        $stmt = mysqli_prepare($this->db, $sql);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "di", $amount, $userId);
+            $result = mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateUserTier($userId, $tier) {
+        $sql = "UPDATE users SET subscription_type = ? WHERE id = ?";
+        $stmt = mysqli_prepare($this->db, $sql);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "si", $tier, $userId);
+            $result = mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
+    public function spendUserBalance($userId, $amount) {
+        if ($amount < 0) {
+            throw new InvalidArgumentException("Amount must be a positive value.");
+        }
+        $sql = "SELECT balance FROM users WHERE id = ?";
+        $stmt = mysqli_prepare($this->db, $sql);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "i", $userId);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_bind_result($stmt, $currentBalance);
+            mysqli_stmt_fetch($stmt);
+            mysqli_stmt_close($stmt);
+
+            if ($currentBalance >= $amount) {
+                return $this->updateUserBalance($userId, $amount);
+            }
+            return false; //Insufficient funds
+        }
+        return false; //Query failed
+    }
+    
+    public function completedRechargeHistory($apptransid) {
+        $query = "SELECT status, description, user_id, coins FROM recharge_history WHERE orderId = ?";
+        $stmt = mysqli_prepare($this->db, $query);
+        mysqli_stmt_bind_param($stmt, "s", $apptransid);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $recharge = mysqli_fetch_assoc($result);
+    
+        if (!$recharge) {
+            return false; // Order not found
+        }
+        
+        if ($recharge['status'] !== 'completed') {
+            $updateQuery = "UPDATE recharge_history SET status = 'completed' WHERE orderId = ?";
+            $updateStmt = mysqli_prepare($this->db, $updateQuery);
+            mysqli_stmt_bind_param($updateStmt, "s", $apptransid);
+            mysqli_stmt_execute($updateStmt);
+        } else return false;
+    
+        // Return the required details
+        return [
+            'description' => $recharge['description'],
+            'userId' => $recharge['user_id'],
+            'coins' => $recharge['coins']
+        ];
+    }
+
+    public function getUserBalance($userId) {
+        $query = "SELECT balance FROM users WHERE id = ?";
+        if ($stmt = mysqli_prepare($this->db, $query)){
+            mysqli_stmt_bind_param($stmt, "i", $userId);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            return mysqli_fetch_assoc($result)['balance'];
+        }
+        return false;
+    }
+    
 
 }

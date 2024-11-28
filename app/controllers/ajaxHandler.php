@@ -35,9 +35,23 @@ switch ($ajaxAction) {
     case 'momoGatewayCallbackHandler':
         $transactionController->momoGatewayCallbackHandler();
         break;
+
     case 'zaloPayGatewayCallbackHandler':
         $transactionController->zaloPayGatewayCallbackHandler();
         break;
+
+    case 'momoGatewayCallbackHandlerResult':
+        $transactionController->momoGatewayCallbackHandlerResult();
+        break;
+
+    case 'zaloPayGatewayCallbackHandlerResult':
+        $transactionController->zaloPayGatewayCallbackHandlerResult();
+        break;
+
+    case 'getUserBalance':
+        $transactionController->getUserBalance();
+        break;
+        
         
     default:
         echo json_encode(['success' => false, 'message' => 'Invalid AJAX action']);

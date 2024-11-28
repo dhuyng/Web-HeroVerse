@@ -132,7 +132,12 @@
         document.getElementById('confirmTransactionBtn').addEventListener('click', function() {
             qrCode.style.display = 'block';
             const selectedAmount = document.querySelector('input[name="priceOption"]:checked').value;
+            const coins = document.querySelector('input[name="priceOption"]:checked').dataset.coins;
             const transactionData = {
+                extraData : {
+                    userId : "<?=$_SESSION['user']['id']?>",
+                    coins : coins,
+                },
                 amount: selectedAmount,
                 orderInfo: 'Cong mot ten lua',
                 paymentMethod: selectedMethod
@@ -175,6 +180,26 @@
                     qrCode.style.display = 'block';
                 })
                 .catch(err => alert('Error generating QR code: ' + err));
+        });
+        fetch('index.php?ajax=getUserBalance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('balance').textContent = Math.floor(data['balance']);
+            } else {
+                console.error('Error:', data.message);
+                alert('Không thể tải số dư.');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('Có lỗi xảy ra khi tải số dư.');
         });
     });
 </script>

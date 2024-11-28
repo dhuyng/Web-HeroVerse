@@ -8,11 +8,13 @@
             <table class="table table-bordered mb-4">
                 <thead class="table-light">
                     <tr>
+                        <th scope="col">Mã đơn</th>
                         <th scope="col">Ngày</th>
                         <th scope="col">Số tiền</th>
                         <th scope="col">Số Coin nhận được</th>
                         <th scope="col">Phương thức thanh toán</th>
                         <th scope="col">Trạng thái</th>
+                        <th scope="col">Nội dung giao dịch</th>
                     </tr>
                 </thead>
                 <tbody id="recharge-history">
@@ -64,11 +66,13 @@
 
                         rechargeTableBody.innerHTML += `
                             <tr>
+                                <td>${recharge.orderId}</td>
                                 <td>${new Date(recharge.date).toLocaleDateString()}</td>
                                 <td>${parseFloat(recharge.amount).toLocaleString('vi-VN')} đ</td>
                                 <td>${recharge.coins} Coin</td>
                                 <td>${recharge.payment_method.charAt(0).toUpperCase() + recharge.payment_method.slice(1)}</td>
                                 <td class="${statusClass}">${recharge.status.charAt(0).toUpperCase() + recharge.status.slice(1)}</td>
+                                <td>${recharge.description}</td>
                             </tr>`;
                     });
                 } else {

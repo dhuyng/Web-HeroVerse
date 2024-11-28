@@ -21,6 +21,25 @@ if (!empty($_GET)) {
 
     $amount = 0;
     $orderId = "";
+
+    function execPostRequest($url, $data) {
+        $sessionCookie = session_id();
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($data)
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_COOKIE, "PHPSESSID=" . $sessionCookie);
+        
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result;
+    }
     
     // MoMo Payment Result Handling
     if (isset($_GET["signature"])) {
@@ -55,6 +74,15 @@ if (!empty($_GET)) {
             if ($resultCode == '0') {
                 $result = '<div class="alert alert-success animate__animated animate__fadeIn"><strong>Payment status: </strong>Success (MoMo)</div>';
                 $thankYouMessage = '<p><strong>Thank you for your payment!</strong></p>';
+                $data = [
+                    'amount' => $amount,
+                    'orderId' => $orderId,
+                    'orderInfo' => $orderInfo,
+                    'extraData' => $extraData,
+                ];
+                $ch = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/index.php?ajax=momoGatewayCallbackHandlerResult';
+                $callResult = execPostRequest($ch, json_encode($data));
+
             } else {
                 $result = '<div class="alert alert-danger animate__animated animate__shakeX"><strong>Payment status: </strong>' . $message . '</div>';
             }
@@ -85,6 +113,8 @@ if (!empty($_GET)) {
             if ($data["status"] == '1') {
                 $result = '<div class="alert alert-success animate__animated animate__fadeIn"><strong>Payment status: </strong>Success (ZaloPay)</div>';
                 $thankYouMessage = '<p><strong>Thank you for your payment!</strong></p>';
+                $ch = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/index.php?ajax=zaloPayGatewayCallbackHandlerResult';
+                $callResult = execPostRequest($ch, json_encode(['apptransid' => $data["apptransid"]]));
             } else {
                 $result = '<div class="alert alert-danger animate__animated animate__shakeX"><strong>Payment status: </strong>Failed (ZaloPay)</div>';
             }

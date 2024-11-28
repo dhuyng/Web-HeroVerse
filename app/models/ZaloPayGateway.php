@@ -12,13 +12,19 @@ class ZaloPayGateway {
             "endpoint" => "https://sb-openapi.zalopay.vn/v2/create"
         ];
 
-        $embeddata = '{"redirecturl": "http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/paymentResult"}'; // Merchant's data
+        $embeddata = '{'.
+        '"redirecturl": "http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/paymentResult",'.
+        '"userId": "' . ($input['extraData']['userId'] ?? ''). '",' .
+        '"coins": "' . ($input['extraData']['coins'] ?? ''). '",' .
+        '"subscription": "' . ($input['extraData']['subscription'] ?? ''). '",' .
+        '"plan": "' . ($input['extraData']['plan'] ?? ''). '"' .
+        '}'; // Merchant's data
         $items = '[]'; // Merchant's data
-        $transID = rand(0, 1000000); // Random trans id
+        $transID = date("ymd") . "_" . $_SESSION['user']['username'] . '_'. time();
         $order = [
             "app_id" => $config["app_id"],
             "app_time" => round(microtime(true) * 1000), // milliseconds
-            "app_trans_id" => date("ymd") . "_" . $transID,
+            "app_trans_id" => $transID,
             "app_user" => $_SESSION['user']['username'] ?? "user123",
             "item" => $items,
             "callback_url" => "index.php?ajax=zaloPayGatewayCallbackHandler",
@@ -42,6 +48,9 @@ class ZaloPayGateway {
         ]);
 
         try {
+            $user = new User();
+            if (!$user->insertRechargeHistory($input['extraData']['userId'], $transID, $input['amount'], $input['extraData']['coins'] ?? 0, 'zalopay', $input['orderInfo'], 'pending'))
+                throw new Exception('Cannot create order');
             $resp = file_get_contents($config["endpoint"], false, $context);
             $result = json_decode($resp, true);
             if ($result === null) { 

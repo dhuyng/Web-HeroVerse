@@ -109,11 +109,13 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
             CREATE TABLE IF NOT EXISTS recharge_history (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
+                orderId VARCHAR(255) UNIQUE NOT NULL,
                 date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 amount DECIMAL(10, 2) NOT NULL, -- Amount in the user's currency
                 coins INT NOT NULL, -- Coins received
                 payment_method ENUM('momo', 'zalopay', 'code') NOT NULL, -- Payment method
                 status ENUM('pending', 'completed', 'failed') DEFAULT 'pending', -- To track transaction state
+                description TEXT,
                 FOREIGN KEY (user_id) REFERENCES users(id)
             );
         END;
@@ -168,7 +170,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
         echo "Error executing insert into usage_history: " . $mysqli->error . "<br>";
     }
 
-    if ($mysqli->query("INSERT INTO `recharge_history` (`id`, `user_id`, `date`, `amount`, `coins`, `payment_method`, `status`) VALUES ('1', '2', current_timestamp(), '20000', '20', 'momo', 'completed'), ('2', '2', current_timestamp(), '50000', '50', 'zalopay', 'pending'), ('3', '2', current_timestamp(), '100000', '100', 'code', 'failed')") === TRUE) {
+    if ($mysqli->query("INSERT INTO `recharge_history` ( `user_id`, `orderId`, `date`, `amount`, `coins`, `payment_method`, `status`) VALUES ('2', 'username_2000301', current_timestamp(), '20000', '20', 'momo', 'completed'), ('2', 'username_2000302', current_timestamp(), '50000', '50', 'zalopay', 'pending'), ('2', 'username_2000303', current_timestamp(), '100000', '100', 'code', 'failed')") === TRUE) {
         echo "Insert into recharge_history successfully!<br>";
     } else {
         echo "Error executing insert into recharge_history: " . $mysqli->error . "<br>";

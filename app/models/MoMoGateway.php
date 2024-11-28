@@ -28,15 +28,15 @@ class MoMoGateway {
             'partnerName' => 'Test',
             'storeId' => 'MomoTestStore',
             'redirectUrl' => "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/paymentResult', 
-            'ipnUrl' => 'index.php?ajax=momoGatewayCallbackHandler',
+            'ipnUrl' => 'index.php?ajax=momoGatewayCallbackHandl',
             'lang' => 'vi',
     
             // Initialize attributes from the input array
             'requestId' => time() . "",
             'amount' => $input['amount'] ?? 10000,
-            'orderId' => $input['orderId'] ?? time() ."",
+            'orderId' => $input['orderId'] ?? $_SESSION['user']['username'] . '_'. time(),
             'orderInfo' => $input['orderInfo'] ?? "Thanh toán qua MoMo",
-            'extraData' => $input['extraData'] ?? '',
+            'extraData' => $input['extraData'] ? base64_encode(json_encode($input['extraData'])) : '',
             'requestType' => 'payWithATM'
         ];
         $rawHash = "accessKey={$data['accessKey']}&amount={$data['amount']}&extraData={$data['extraData']}&ipnUrl={$data['ipnUrl']}&orderId={$data['orderId']}&orderInfo={$data['orderInfo']}&partnerCode={$data['partnerCode']}&redirectUrl={$data['redirectUrl']}&requestId={$data['requestId']}&requestType={$data['requestType']}";

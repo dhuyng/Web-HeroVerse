@@ -121,6 +121,12 @@
         }
 
         const transactionData = {
+            extraData : {
+                userId : "<?=$_SESSION['user']['id']?>",
+                subscription : true,
+                plan : plan.toLowerCase()
+            },
+            orderId : "<?=$_SESSION['user']['username'] . '_'. time()?>" ,
             amount: priceVND,
             orderInfo: `Subscription Plan: ${plan}`,
             paymentMethod: paymentMethod.toLowerCase(), // e.g., 'momo' or 'zalopay'
