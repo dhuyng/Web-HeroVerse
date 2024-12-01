@@ -75,31 +75,38 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
             );
         END;
         ",
+        'create_events_table' => "
+        CREATE PROCEDURE create_events_table()
+        BEGIN
+            CREATE TABLE IF NOT EXISTS events (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(200) NOT NULL,
+                description TEXT NOT NULL,
+                start_time DATETIME NOT NULL,  -- Event start time
+                end_time DATETIME NOT NULL,    -- Event end time
+                location VARCHAR(255) DEFAULT NULL,  -- Optional location
+                image VARCHAR(255) DEFAULT NULL,     -- Path to event image
+                created_by VARCHAR(50) NOT NULL,             -- Foreign key to users table for admin or creator
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (created_by) REFERENCES users(username) ON DELETE CASCADE
+            );
+        END;
+        ",
         'create_comments_table' => "
         CREATE PROCEDURE create_comments_table()
         BEGIN
             CREATE TABLE IF NOT EXISTS comments (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                content TEXT NOT NULL,
-                type ENUM('hero', 'news') NOT NULL,
-                type_id INT NOT NULL,
+                user_id INT NOT NULL, -- Foreign key to users table
+                event_id INT DEFAULT NULL, -- Foreign key to events table
+                content TEXT NOT NULL, -- Comment text
+                status ENUM('visible', 'hidden') DEFAULT 'visible', -- For moderation
+                moderated_by INT DEFAULT NULL, -- Tracks which admin moderated the comment
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            );
-        END;
-        ",
-        'create_news_table' => "
-        CREATE PROCEDURE create_news_table()
-        BEGIN
-            CREATE TABLE IF NOT EXISTS news (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                title VARCHAR(200) NOT NULL,
-                content TEXT NOT NULL,
-                image VARCHAR(255) DEFAULT NULL,
-                keywords VARCHAR(255) DEFAULT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+                FOREIGN KEY (moderated_by) REFERENCES users(id) ON DELETE SET NULL
             );
         END;
         ",
@@ -183,7 +190,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
     }
 
     // Execute stored procedures to create tables
-    $tablesToCreate = ['create_users_table', 'create_heroes_table','create_map_table', 'create_comments_table', 'create_news_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table', 'create_support_table'];
+    $tablesToCreate = ['create_users_table', 'create_heroes_table','create_map_table', 'create_events_table', 'create_comments_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table', 'create_support_table'];
 
     foreach ($tablesToCreate as $procedureName) {
         if ($mysqli->query("CALL $procedureName()") === TRUE) {

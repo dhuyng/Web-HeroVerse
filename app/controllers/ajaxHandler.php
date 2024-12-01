@@ -5,6 +5,8 @@ require_once 'app/controllers/AuthController.php';
 $authController = new AuthController();
 require_once 'app/controllers/TransactionController.php';
 $transactionController = new TransactionController();
+require_once 'app/controllers/EventController.php';
+$eventController = new EventController();
 $ajaxAction = $_GET['ajax'] ?? '';
 
 switch ($ajaxAction) {
@@ -72,7 +74,34 @@ switch ($ajaxAction) {
         error_log('toggleSupportStatus');
         $authController->toggleSupportStatus();
             break;
-    
+
+    case 'createEvent':
+        $eventController->createEvent();
+            break;
+
+    case 'getEvents':
+        $eventController->getEvents();
+            break;
+
+    case 'updateEvent':
+        $eventController->updateEvent();
+            break;
+
+    case 'deleteEvent':
+        $eventController->deleteEvent();
+            break;
+
+    case 'addComment':
+        $eventController->addComment();
+            break;
+
+    case 'getComments':
+        $eventController->getComments();
+            break;
+
+    case 'editComment':
+        $eventController->editComment();
+            break;
         
     default:
         echo json_encode(['success' => false, 'message' => 'Invalid AJAX action']);

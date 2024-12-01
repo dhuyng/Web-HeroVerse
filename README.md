@@ -121,26 +121,33 @@ This document provides an overview of the database schema for the application. I
 
 ### 3. `comments` Table
 
-| Column       | Type            | Constraints                | Description                       |
-|--------------|-----------------|----------------------------|-----------------------------------|
-| `id`         | INT             | PRIMARY KEY, AUTO_INCREMENT | Unique ID for each comment.       |
-| `user_id`    | INT             | FOREIGN KEY (`users.id`)    | User who posted the comment.      |
-| `content`    | TEXT            | NOT NULL                    | Comment text.                     |
-| `type`       | ENUM('hero', 'news') | NOT NULL                | Type of comment (Hero/News).      |
-| `type_id`    | INT             | NOT NULL                    | ID of the hero/news being commented. |
-| `created_at` | TIMESTAMP       | DEFAULT CURRENT_TIMESTAMP   | Comment creation date.            |
+| Column         | Type                | Constraints                     | Description                                  |
+|----------------|---------------------|---------------------------------|----------------------------------------------|
+| `id`           | INT                | PRIMARY KEY, AUTO_INCREMENT     | Unique ID for each comment.                  |
+| `user_id`      | INT                | FOREIGN KEY (`users.id`)        | User who posted the comment.                 |
+| `event_id`     | INT                | FOREIGN KEY (`events.id`)       | ID of the event being commented on.          |
+| `content`      | TEXT               | NOT NULL                        | Comment text.                                |
+| `status`       | ENUM('visible', 'hidden') | DEFAULT 'visible'          | Status for moderation (visible or hidden).   |
+| `moderated_by` | INT                | FOREIGN KEY (`users.id`), NULL  | Admin who moderated the comment.             |
+| `created_at`   | TIMESTAMP          | DEFAULT CURRENT_TIMESTAMP       | Comment creation date.                       |
 
-### 4. `news` Table
+---
 
-| Column       | Type            | Constraints                | Description                       |
-|--------------|-----------------|----------------------------|-----------------------------------|
-| `id`         | INT             | PRIMARY KEY, AUTO_INCREMENT | Unique ID for each news item.     |
-| `title`      | VARCHAR(200)    | NOT NULL                    | News title.                       |
-| `content`    | TEXT            | NOT NULL                    | News content.                     |
-| `image`      | VARCHAR(255)    | NULL                        | Path to news image.               |
-| `keywords`   | VARCHAR(255)    | NULL                        | SEO keywords.                     |
-| `created_at` | TIMESTAMP       | DEFAULT CURRENT_TIMESTAMP   | News creation date.               |
-| `updated_at` | TIMESTAMP       | ON UPDATE CURRENT_TIMESTAMP | Last update date.                 |
+### 4. `events` Table
+
+| Column         | Type                | Constraints                     | Description                                  |
+|----------------|---------------------|---------------------------------|----------------------------------------------|
+| `id`           | INT                | PRIMARY KEY, AUTO_INCREMENT     | Unique ID for each event.                    |
+| `title`        | VARCHAR(200)       | NOT NULL                        | Event title.                                 |
+| `description`  | TEXT               | NOT NULL                        | Detailed description of the event.           |
+| `image`        | VARCHAR(255)       | NULL                            | Path to event image.                         |
+| `keywords`     | VARCHAR(255)       | NULL                            | SEO keywords.                                |
+| `start_time`   | DATETIME           | NOT NULL                        | Event start time.                            |
+| `end_time`     | DATETIME           | NOT NULL                        | Event end time.                              |
+| `location`     | VARCHAR(255)       | NOT NULL                        | Event location.                              |
+| `created_at`   | TIMESTAMP          | DEFAULT CURRENT_TIMESTAMP       | Event creation date.                         |
+| `updated_at`   | TIMESTAMP          | ON UPDATE CURRENT_TIMESTAMP     | Last update date.                            |
+
 
 ### 5. `pages` Table
 

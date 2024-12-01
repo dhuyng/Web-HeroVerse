@@ -41,4 +41,20 @@ class BaseController {
         include "app/views/layouts/footer.php";
     }
 
+    public function renderEvent($template, $data = []) {
+        extract($data);
+        include "app/views/layouts/header.php";
+        include "app/views/layouts/navbar.php";
+        include "app/views/pages/event/{$template}.php";
+        include "app/views/layouts/footer.php";
+    }
+
+    public function renderEventPage($page, $data = []) {
+        extract($data);
+        include "app/views/layouts/header.php";
+        include "app/views/layouts/navbar.php";
+        include "app/views/pages/{$page}.php";
+        include "app/views/layouts/footer.php";
+    }
+
 }

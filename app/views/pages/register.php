@@ -13,7 +13,7 @@
         <input type="email" id="email" name="email" placeholder="Email" required>
         <input type="password" id="password" name="password" placeholder="Password (6-20 ký tự)" required minlength="6" maxlength="20">
         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
-        <div class="mb-3">
+        <div class="mb-3" hidden>
             <label for="role" class="form-label text-white">Role</label>
             <select name="role" id="role" class="form-select">
                 <option value="member">Member</option>
