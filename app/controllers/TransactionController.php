@@ -194,8 +194,9 @@ class TransactionController {
         if (!empty($postdatajson)) {
             try {
                 $apptransid = $postdatajson["apptransid"];
+                $status = $postdatajson["status"];
                 $user = new User();
-                if ($result = $user->completedRechargeHistory($apptransid)) {
+                if ($result = $user->completedRechargeHistory($apptransid, $status)) {
                     $description = $result['description'];
                     $plan = null;
     

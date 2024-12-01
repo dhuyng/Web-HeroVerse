@@ -114,9 +114,11 @@ if (!empty($_GET)) {
                 $result = '<div class="alert alert-success animate__animated animate__fadeIn"><strong>Payment status: </strong>Success (ZaloPay)</div>';
                 $thankYouMessage = '<p><strong>Thank you for your payment!</strong></p>';
                 $ch = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/index.php?ajax=zaloPayGatewayCallbackHandlerResult';
-                $callResult = execPostRequest($ch, json_encode(['apptransid' => $data["apptransid"]]));
+                $callResult = execPostRequest($ch, json_encode(['apptransid' => $data["apptransid"], 'status' => 'completed']));
             } else {
                 $result = '<div class="alert alert-danger animate__animated animate__shakeX"><strong>Payment status: </strong>Failed (ZaloPay)</div>';
+                $ch = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/index.php?ajax=zaloPayGatewayCallbackHandlerResult';
+                $callResult = execPostRequest($ch, json_encode(['apptransid' => $data["apptransid"], 'status' => 'failed']));
             }
         } else {
             $result = '<div class="alert alert-danger animate__animated animate__flash">This transaction could be hacked, please check your checksum and returned checksum</div>';

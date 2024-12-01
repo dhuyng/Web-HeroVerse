@@ -235,7 +235,7 @@ class User {
         return false; //Query failed
     }
     
-    public function completedRechargeHistory($apptransid) {
+    public function completedRechargeHistory($apptransid, $status) {
         $query = "SELECT status, description, user_id, coins FROM recharge_history WHERE orderId = ?";
         $stmt = mysqli_prepare($this->db, $query);
         mysqli_stmt_bind_param($stmt, "s", $apptransid);
@@ -248,7 +248,7 @@ class User {
         }
         
         if ($recharge['status'] !== 'completed') {
-            $updateQuery = "UPDATE recharge_history SET status = 'completed' WHERE orderId = ?";
+            $updateQuery = "UPDATE recharge_history SET status = '$status' WHERE orderId = ?";
             $updateStmt = mysqli_prepare($this->db, $updateQuery);
             mysqli_stmt_bind_param($updateStmt, "s", $apptransid);
             mysqli_stmt_execute($updateStmt);
