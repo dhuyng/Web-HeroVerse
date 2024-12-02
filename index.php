@@ -27,7 +27,7 @@ $baseUrl = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '
 // Gọi controller chính
 require_once 'app/controllers/HomeController.php';
 require_once 'app/controllers/AuthController.php';
-require_once 'config/create_tables.php';
+// require_once 'config/create_tables.php';
 $url = $_GET['url'] ?? 'home'; // Lấy URL hoặc mặc định là 'home'
 
 $controller = new HomeController();

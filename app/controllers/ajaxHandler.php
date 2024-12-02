@@ -7,6 +7,8 @@ require_once 'app/controllers/TransactionController.php';
 $transactionController = new TransactionController();
 require_once 'app/controllers/EventController.php';
 $eventController = new EventController();
+require_once 'app/controllers/DashboardController.php';
+$dashboardController = new DashboardController();
 $ajaxAction = $_GET['ajax'] ?? '';
 
 switch ($ajaxAction) {
@@ -98,10 +100,28 @@ switch ($ajaxAction) {
     case 'getComments':
         $eventController->getComments();
             break;
-
     case 'editComment':
         $eventController->editComment();
             break;
+    case 'updateUser':
+        $authController->updateUser();
+            break;
+    case 'countUsers':
+        $dashboardController->countUsers();
+            break;
+    case 'countSupports':
+        $dashboardController->countSupports();
+            break;
+    case 'countEvents':
+        $dashboardController->countEvents();
+            break;
+    case 'usersByMonth':
+        $dashboardController->countUserbyMonth();
+            break;
+    case 'coinForPayment':
+        $dashboardController->coinForPayment();
+            break;
+    
         
     default:
         echo json_encode(['success' => false, 'message' => 'Invalid AJAX action']);

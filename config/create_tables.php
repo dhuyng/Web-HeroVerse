@@ -172,10 +172,9 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
         BEGIN
             CREATE TABLE IF NOT EXISTS support (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
+                user_id INT NULL,
                 title VARCHAR(200) NOT NULL,
                 question TEXT NOT NULL,
-                answer TEXT DEFAULT NULL,
                 is_processed BOOLEAN DEFAULT FALSE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -198,25 +197,6 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
         } else {
             echo "Error executing `$procedureName`: " . $mysqli->error . "<br>";
         }
-    }
-
-    if ($mysqli->query("INSERT INTO `usage_history` (`id`, `user_id`, `date`, `coins_used`, `description`) VALUES ('1', '2', '02/11/2024', '10', 'Mua tướng Dragneel'), ('2', '2', '20/10/2024', '30', 'Nâng cấp tài khoản VIP'), ('3', '2', '15/10/2024', '5', 'Sử dụng dịch vụ hỗ trợ')") === TRUE) {
-        echo "Insert into usage_history successfully!<br>";
-    } else {
-        echo "Error executing insert into usage_history: " . $mysqli->error . "<br>";
-    }
-
-    if ($mysqli->query("INSERT INTO `recharge_history` ( `user_id`, `orderId`, `date`, `amount`, `coins`, `payment_method`, `status`) VALUES ('2', 'username_2000301', current_timestamp(), '20000', '20', 'momo', 'completed'), ('2', 'username_2000302', current_timestamp(), '50000', '50', 'zalopay', 'pending'), ('2', 'username_2000303', current_timestamp(), '100000', '100', 'code', 'failed')") === TRUE) {
-        echo "Insert into recharge_history successfully!<br>";
-    } else {
-        echo "Error executing insert into recharge_history: " . $mysqli->error . "<br>";
-    }
-
-    
-    if ($mysqli->query("INSERT INTO `support` (`id`, `user_id`, `title`, `question`, `answer`, `is_processed`) VALUES ('1', '2', 'Hỗ trợ tài khoản', 'Tôi không thể đăng nhập vào tài khoản của mình. Xin hãy giúp đỡ!', NULL, '1'), ('2', '2', 'Hỗ trợ nạp tiền', 'Tôi đã nạp tiền nhưng không nhận được Coin. Xin hãy giúp đỡ!', NULL, '0'), ('3', '1', 'Hỗ trợ dịch vụ', 'Tôi muốn nâng cấp tài khoản VIP. Xin hãy giúp đỡ!', NULL, '1')") === TRUE) {
-        echo "Insert into support successfully!<br>";
-    } else {
-        echo "Error executing insert into support: " . $mysqli->error . "<br>";
     }
 
 
@@ -262,11 +242,31 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
 
 
     // // Load CSV data into users table
-    // if (file_exists($csvFile)) {
-    //     loadUsersFromCSV($mysqli, $csvFile);
-    // } else {
-    //     echo "CSV file not found at: $csvFile<br>";
-    // }
+    if (file_exists($csvFile)) {
+        loadUsersFromCSV($mysqli, $csvFile);
+    } else {
+        echo "CSV file not found at: $csvFile<br>";
+    }
+
+
+    if ($mysqli->query("INSERT INTO `usage_history` (`id`, `user_id`, `date`, `coins_used`, `description`) VALUES ('1', '2', '02/11/2024', '10', 'Mua tướng Dragneel'), ('2', '2', '20/10/2024', '30', 'Nâng cấp tài khoản VIP'), ('3', '2', '15/10/2024', '5', 'Sử dụng dịch vụ hỗ trợ')") === TRUE) {
+        echo "Insert into usage_history successfully!<br>";
+    } else {
+        echo "Error executing insert into usage_history: " . $mysqli->error . "<br>";
+    }
+
+    if ($mysqli->query("INSERT INTO `recharge_history` ( `user_id`, `orderId`, `date`, `amount`, `coins`, `payment_method`, `status`) VALUES ('2', 'username_2000301', current_timestamp(), '20000', '20', 'momo', 'completed'), ('2', 'username_2000302', current_timestamp(), '50000', '50', 'zalopay', 'pending'), ('2', 'username_2000303', current_timestamp(), '100000', '100', 'code', 'failed')") === TRUE) {
+        echo "Insert into recharge_history successfully!<br>";
+    } else {
+        echo "Error executing insert into recharge_history: " . $mysqli->error . "<br>";
+    }
+
+    
+    if ($mysqli->query("INSERT INTO `support` (`id`, `user_id`, `title`, `question`, `is_processed`) VALUES ('1', '2', 'Hỗ trợ tài khoản', 'Tôi không thể đăng nhập vào tài khoản của mình. Xin hãy giúp đỡ!', '1'), ('2', '2', 'Hỗ trợ nạp tiền', 'Tôi đã nạp tiền nhưng không nhận được Coin. Xin hãy giúp đỡ!', '0'), ('3', '1', 'Hỗ trợ dịch vụ', 'Tôi muốn nâng cấp tài khoản VIP. Xin hãy giúp đỡ!', '1')") === TRUE) {
+        echo "Insert into support successfully!<br>";
+    } else {
+        echo "Error executing insert into support: " . $mysqli->error . "<br>";
+    }
 
     // Close connection
     $mysqli->close();
