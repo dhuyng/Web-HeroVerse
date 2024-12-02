@@ -1,14 +1,20 @@
 <?php
 
 require_once(__DIR__ . '/../models/Hero.php');
+require_once(__DIR__ . '/../models/User.php');
+
 
 class HeroController
 {
     private $heroModel;
+    private $userModel;  
+
 
     public function __construct()
     {
         $this->heroModel = new Hero();
+        $this->userModel = new User(); 
+
     }
 
     public function getAllHeroes()
@@ -103,5 +109,43 @@ class HeroController
 
         return ['success' => false, 'message' => 'Phương thức không hợp lệ'];
     }
+
+    public function buyHero($heroId, $heroPrice, $userId) {
+        // Kiểm tra nếu các tham số hợp lệ
+        if (empty($heroId) || empty($heroPrice) || empty($userId)) {
+            return false; // Nếu dữ liệu không hợp lệ, trả về false
+        }
+    
+   
+        $userModel = new User();
+        $balance = $userModel->getUserBalance($userId);
+    
+        // Kiểm tra nếu số dư đủ
+        if ($balance >= $heroPrice) {
+            // Cập nhật số dư của người dùng
+            $userModel->updateUserBalance($userId, -$heroPrice);
+
+            // Thêm hero vào danh sách của người dùng
+            $userModel->addHeroToUser($userId, $heroId);
+
+            return true; // Thành công
+        } else {
+            return false; // Nếu số dư không đủ
+        }
+       
+    }
+    
+    public function checkOwned($userId, $heroId){
+        $heroModel = new Hero();
+        $check = $heroModel->checkHeroOwnership($userId, $heroId);
+        return $check;
+    }
+
+    public function getBalance($userId){
+        $userModel = new User();
+        $balance = $userModel->getUserBalance($userId);
+        return (int)$balance;
+    }
+
 }
 ?>

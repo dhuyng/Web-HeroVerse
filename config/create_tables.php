@@ -184,6 +184,22 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );
+        END;",
+
+        'create_user_heroes' => "
+        CREATE PROCEDURE create_user_heroes()
+        BEGIN
+            CREATE TABLE IF NOT EXISTS user_heroes (
+                id INT AUTO_INCREMENT PRIMARY KEY,         
+                user_id INT NOT NULL,                      
+                hero_id INT NOT NULL,                   
+                date_purchased TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  
+                UNIQUE KEY unique_user_hero (user_id, hero_id),  
+                FOREIGN KEY (user_id) REFERENCES users(id)   
+                    ON DELETE CASCADE,                       
+                FOREIGN KEY (hero_id) REFERENCES heroes(id)  
+                    ON DELETE CASCADE                       
+            );
         END;"
     ];
 
@@ -193,7 +209,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
     }
 
     // Execute stored procedures to create tables
-    $tablesToCreate = ['create_users_table', 'create_heroes_table','create_map_table', 'create_events_table', 'create_comments_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table', 'create_support_table'];
+    $tablesToCreate = ['create_user_heroes','create_users_table', 'create_heroes_table','create_map_table', 'create_events_table', 'create_comments_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table', 'create_support_table'];
 
     foreach ($tablesToCreate as $procedureName) {
         if ($mysqli->query("CALL $procedureName()") === TRUE) {

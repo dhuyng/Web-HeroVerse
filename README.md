@@ -169,6 +169,19 @@ This document provides an overview of the database schema for the application. I
 | `created_at` | `TIMESTAMP`     | `DEFAULT CURRENT_TIMESTAMP`                | Entry creation date.                           |
 | `updated_at` | `TIMESTAMP`     | `DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | Last update date.                 |
 
+### 7. `user_heroes` Table
+| Column             | Type            | Constraints                                                       | Description                                                        |
+|--------------------|-----------------|-------------------------------------------------------------------|--------------------------------------------------------------------|
+| `id`               | `INT`           | `PRIMARY KEY, AUTO_INCREMENT`                                     | Unique ID for each record.                                         |
+| `user_id`          | `INT`           | `NOT NULL`                                                        | User ID (Foreign Key linked to the `users` table).                 |
+| `hero_id`          | `INT`           | `NOT NULL`                                                        | Hero ID (Foreign Key linked to the `heroes` table).                |
+| `date_purchased`   | `TIMESTAMP`     | `DEFAULT CURRENT_TIMESTAMP`                                       | The timestamp when the hero was purchased (default is current time).|
+| `unique_user_hero` | `UNIQUE KEY`    | `(user_id, hero_id)`                                              | Ensures each user can only own one unique hero.                     |
+| `FOREIGN KEY (user_id)` | `FOREIGN KEY` | `REFERENCES users(id) ON DELETE CASCADE`                       | Foreign Key linking to the `users` table, cascading on delete.     |
+| `FOREIGN KEY (hero_id)` | `FOREIGN KEY` | `REFERENCES heroes(id) ON DELETE CASCADE`                      x   | Foreign Key linking to the `heroes` table, cascading on delete.    |
+
+
+
 ## Payment Credit Cards Test Details
 ### Momo
 ATM Cards Test Details: https://developers.momo.vn/v3/docs/payment/onboarding/test-instructions/#atm-cards-test-details

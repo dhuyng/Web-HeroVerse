@@ -67,5 +67,34 @@ class Hero
 
         return $result->num_rows > 0;
     }
+
+    public function getHeroById($id)
+    {
+        $query = "SELECT * FROM heroes WHERE id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    public function checkHeroOwnership($userId, $heroId) {
+        // Truy vấn kiểm tra cặp user_id và hero_id trong bảng user_heroes
+        $query = "SELECT COUNT(*) FROM user_heroes WHERE user_id = ? AND hero_id = ?";
+        $stmt = $this->db->prepare($query);
+        
+        // Gắn các tham số vào câu truy vấn
+        $stmt->bind_param("ii", $userId, $heroId); // 'ii' là kiểu dữ liệu (integer)
+        
+        // Thực thi câu truy vấn
+        $stmt->execute();
+        
+        // Lấy kết quả
+        $result = $stmt->get_result()->fetch_row();  // fetch_row() để lấy kết quả dạng mảng
+        
+        // Kiểm tra nếu có ít nhất một kết quả (mảng trả về [0] là COUNT(*))
+        return $result[0] > 0;
+    }
+    
 }
 ?>
