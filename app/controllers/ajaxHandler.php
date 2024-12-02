@@ -10,6 +10,14 @@ $eventController = new EventController();
 $ajaxAction = $_GET['ajax'] ?? '';
 
 switch ($ajaxAction) {
+    case 'login':
+        $authController->login();
+        break;
+        
+    case 'unlockAccount':
+        $authController->unlockAccount();
+        break;
+
     case 'verifyCurrentPassword':
         $authController->verifyCurrentPassword();
         break;

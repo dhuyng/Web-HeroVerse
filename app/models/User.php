@@ -23,22 +23,29 @@ class User {
     }
 
     // Login method
-    public function login($username, $password): array | bool {
+    public function getUserByUsername($username) {
         $query = "SELECT * FROM users WHERE username = ? OR email = ?";
         $stmt = mysqli_prepare($this->db, $query);
-
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "ss", $username, $username);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-            $user = mysqli_fetch_assoc($result);
-
-            if ($user && password_verify($password, $user['password'])) {
-                return $user;
-            }
-        }
-        return false;
+        mysqli_stmt_bind_param($stmt, "ss", $username, $username);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($result);
     }
+    
+    public function resetFailedLogin($username) {
+        $query = "UPDATE users SET failed_login = 0, last_login = NOW() WHERE username = ? OR email = ?";
+        $stmt = mysqli_prepare($this->db, $query);
+        mysqli_stmt_bind_param($stmt, "ss", $username, $username);
+        mysqli_stmt_execute($stmt);
+    }
+    
+    public function incrementFailedLogin($username) {
+        $query = "UPDATE users SET failed_login = failed_login + 1, last_login = NOW() WHERE username = ? OR email = ?";
+        $stmt = mysqli_prepare($this->db, $query);
+        mysqli_stmt_bind_param($stmt, "ss", $username, $username);
+        mysqli_stmt_execute($stmt);
+    }
+    
 
     public function getUserById($id) {
         $query = "SELECT * FROM users WHERE id = ?";

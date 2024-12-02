@@ -31,6 +31,8 @@ class HomeController extends BaseController {
     }
 
     public function login() {
+        // Generate Anti-CSRF token
+        generateSessionToken();
         $this->render('login', 'Login - HeroVerse');
     }
 
@@ -39,6 +41,8 @@ class HomeController extends BaseController {
     }
 
     public function info() {
+        // Generate Anti-CSRF token
+        generateSessionToken();
         $this->renderUser('info', 'Thông Tin Tài Khoản - HeroVerse');
     }
 
@@ -75,6 +79,8 @@ class HomeController extends BaseController {
     }
     
     public function info_admin() {
+        // Generate Anti-CSRF token
+        generateSessionToken();
         $this->renderAdmin('info_admin', 'Info Admin - HeroVerse');
     }
 

@@ -44,6 +44,9 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
                 balance DECIMAL(10, 2) DEFAULT 0.00,
                 two_fa_enabled BOOLEAN DEFAULT FALSE,
                 profile_pic VARCHAR(255) DEFAULT NULL,
+                failed_login INT DEFAULT 0, 
+                last_login TIMESTAMP NULL DEFAULT NULL,
+                lockout_time TIMESTAMP NULL DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             );
@@ -275,3 +278,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
 
 }
 ?>
+<!-- ALTER TABLE users
+ADD COLUMN failed_login INT DEFAULT 0 AFTER profile_pic,
+ADD COLUMN last_login TIMESTAMP NULL DEFAULT NULL AFTER failed_login,
+ADD COLUMN lockout_time TIMESTAMP NULL DEFAULT NULL AFTER last_login; -->

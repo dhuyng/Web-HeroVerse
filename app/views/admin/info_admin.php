@@ -74,6 +74,7 @@
                 <div class="form-group">
                     <label for="currentPasswordInput">Mật Khẩu Hiện Tại</label>
                     <input type="password" id="currentPasswordInput" class="form-control" placeholder="Nhập mật khẩu hiện tại">
+                    <?= tokenField(); ?>
                 </div>
                 <div id="modalErrorMessages" class="mt-3"></div>
             </div>
@@ -129,6 +130,7 @@ document.getElementById('verifyPasswordBtn').addEventListener('click', function 
     const currentPasswordInput = document.getElementById('currentPasswordInput');
     const currentPassword = currentPasswordInput.value.trim();
     const errorMessageContainer = document.getElementById('modalErrorMessages');
+    const userToken = document.querySelector('input[name="user_token"]').value;
 
     // Clear previous error messages
     errorMessageContainer.innerHTML = '';
@@ -144,7 +146,10 @@ document.getElementById('verifyPasswordBtn').addEventListener('click', function 
     // Verify password via AJAX
     fetch('index.php?ajax=verifyCurrentPassword', {
         method: 'POST',
-        body: JSON.stringify({ password: currentPassword }),
+        body: JSON.stringify({ 
+            password: currentPassword,
+            user_token: userToken
+         }),
         headers: {
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
@@ -161,7 +166,7 @@ document.getElementById('verifyPasswordBtn').addEventListener('click', function 
             } else {
                 const error = document.createElement('p');
                 error.classList.add('text-danger');
-                error.textContent = 'Mật khẩu hiện tại không đúng.';
+                error.textContent = data.message ?? 'Mật khẩu hiện tại không đúng.';
                 errorMessageContainer.appendChild(error);
             }
         })

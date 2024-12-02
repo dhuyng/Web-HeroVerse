@@ -1,6 +1,8 @@
 <?php
 // index.php
 session_start();
+// Security DVWA
+require_once 'config/dvwaPage.inc.php';
 // Check if it's an AJAX request by looking for the 'ajax' query parameter or the X-Requested-With header
 $isAjaxRequest = isset($_GET['ajax']) || isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
 if ($isAjaxRequest) {
@@ -55,8 +57,7 @@ switch ($url) {
         $controller->contact();
         break;
     case 'login':
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') $authController->login();
-        else $controller->login();
+        $controller->login();
         break;
     case 'register':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') $authController->register();
