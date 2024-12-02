@@ -7,38 +7,31 @@
         <div class="owl-carousel testimonial-carousel">
             <div class="testimonial-item bg-transparent border rounded p-4">
                 <i class="text-primary mb-3"></i>
-                <h5 class="mb-3"> <a href=""> the New Hero: Undying Fury </a></h5>
+                <h5 class="mb-3"> <a href=""> Guess what coming ?</a></h5>
                 <div class="d-flex align-items-center">
-                    <img class="img-fluid flex-shrink-0" src="public/img/carousel/carousel-2.png">
+                    <img class="img-fluid flex-shrink-0" src="public/img/gameplay/maps/wall_0.png">
 
                 </div>
             </div>
             <div class="testimonial-item bg-transparent border rounded p-4">
                 <i class="text-primary mb-3"></i>
-                <h5 class="mb-3"> <a href="">New Private Campaigns Unveiled </a></h5>
+                <h5 class="mb-3"> <a href="">New Adventure Beginning </a></h5>
                 <div class="d-flex align-items-center">
-                    <img class="img-fluid flex-shrink-0" src="public/img/carousel/carousel-3.png">
-
-                </div>
-            </div>
-
-            <div class="testimonial-item bg-transparent border rounded p-4">
-                <i class="text-primary mb-3"></i>
-                <h5 class="mb-3"> <a href=""> the New Hero: Undying Fury </a></h5>
-                <div class="d-flex align-items-center">
-                    <img class="img-fluid flex-shrink-0" src="public/img/carousel/carousel-2.png">
+                    <img class="img-fluid flex-shrink-0" src="public/img/gameplay/maps/wall_1.png">
 
                 </div>
             </div>
 
             <div class="testimonial-item bg-transparent border rounded p-4">
                 <i class="text-primary mb-3"></i>
-                <h5 class="mb-3"> <a href="">New Private Campaigns Unveiled </a></h5>
+                <h5 class="mb-3"> <a href=""> Stars War Never Die </a></h5>
                 <div class="d-flex align-items-center">
-                    <img class="img-fluid flex-shrink-0" src="public/img/carousel/carousel-3.png">
+                    <img class="img-fluid flex-shrink-0" src="public/img/gameplay/maps/event_5.png">
 
                 </div>
             </div>
+
+           
             <?php foreach ($events as $event): ?>
                 <div class="testimonial-item bg-transparent border rounded p-4">
                     <i class="text-primary mb-3"></i>
