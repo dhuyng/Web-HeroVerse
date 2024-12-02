@@ -379,4 +379,17 @@ class User {
         return false;
     }  
 
+    public function addHeroToUser($userId, $heroId) {
+        $query = "INSERT INTO user_heroes (user_id, hero_id) VALUES (?, ?)";
+        $stmt = mysqli_prepare($this->db, $query);
+    
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "ii", $userId, $heroId);
+            return mysqli_stmt_execute($stmt);
+        }
+        return false;
+    }
+
+    
+    
 }

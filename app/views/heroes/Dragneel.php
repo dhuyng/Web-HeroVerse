@@ -7,11 +7,7 @@
                 <img src="public/img/gameplay/heroes/dragneel.gif" alt="Dragneel" class="hero-gif" id="dragneelGif">
                 <div class="hero-shadow"></div> <!-- Bóng dưới Dragneel -->
             </div>
-            <div class="text-center mb-4">
-                <p class="card-text text-warning">$100</p>
-                <button class="unlock-btn">Unlock</button>
-
-            </div>
+        
 
             <!-- Hidden Storyline Section -->
             <div id="storyline" class="bg-dark text-light p-4 rounded shadow-lg" style="display: none;">

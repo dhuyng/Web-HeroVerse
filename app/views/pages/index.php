@@ -1,3 +1,10 @@
+<?php
+// Kiểm tra xem người dùng đã đăng nhập chưa
+$is_logged_in = isset($_SESSION['user']['id']); // Giả sử bạn lưu ID người dùng vào session khi đăng nhập thành công
+?>
+
+
+
 <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
     <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
         <span class="sr-only">Loading...</span>
@@ -48,8 +55,10 @@
 
                 <div class="col-lg-6 text-center  bg-dark">
                     <h1 class="display-3 text-white animated slideInRight">Welcome To<br><span class="fst-italic" style="color: #6A0DAD">HEROVERSE </span></h1>
-                    <p class="text-white animated slideInRight mb-4 pb-2 fw-bold">Đăng nhập ngay để nhận đặc quyền game thủ !</p>
-                    <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideỈnight fw-bold wow rubberBand">Đăng nhập</a>
+                    <?php if (!$is_logged_in): ?>
+                        <p class="text-white animated slideInRight mb-4 pb-2 fw-bold">Đăng nhập ngay để nhận đặc quyền game thủ !</p>
+                        <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideInRight fw-bold wow rubberBand">Đăng nhập</a>
+                    <?php endif; ?>
                 </div>
                 
             </div>
@@ -197,7 +206,9 @@
                             <li>Hỗ trợ tiêu chuẩn</li>
                         </ul>
                         <br> <br>
-                        <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideỈnight fw-bold">Sign up for free</a> 
+                        <?php if (!$is_logged_in): ?>
+                            <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideỈnight fw-bold">Sign up for free</a> 
+                        <?php endif; ?>
 
                     </div>
                 </div>

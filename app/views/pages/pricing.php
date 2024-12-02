@@ -1,3 +1,8 @@
+<?php
+// Kiểm tra xem người dùng đã đăng nhập chưa
+$is_logged_in = isset($_SESSION['user']['id']); // Giả sử bạn lưu ID người dùng vào session khi đăng nhập thành công
+?>
+
 <!-- Pricing Section -->
 <div class="container-xxl py-5 bg-light">
     <div class="container">
@@ -15,7 +20,9 @@
                         <li>Mở khóa một số màn chơi giới hạn</li>
                         <li>Hỗ trợ tiêu chuẩn</li>
                     </ul>
-                    <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 fw-bold">Sign up for free</a>
+                    <?php if (!$is_logged_in): ?>
+                            <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideỈnight fw-bold">Sign up for free</a> 
+                    <?php endif; ?>
                 </div>
             </div>
 
