@@ -39,7 +39,7 @@
 
                 <div class="col-md-6">
                     <div class="wow fadeInUp" data-wow-delay="0.2s">
-                        <form>
+                        <form id="contactForm">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <div class="form-floating">
@@ -84,3 +84,44 @@
     </div>
     <!-- Contact Section End -->
 </div>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', function (e) {
+    e.preventDefault(); // Prevent the default form submission
+
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+
+    // Validate the inputs
+    if (!subject || !message) {
+        alert('Vui lòng điền đầy đủ thông tin.');
+        return;
+    }
+
+    // Send data to the server via AJAX
+    fetch('index.php?ajax=saveQuestion', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            title: subject,
+            question: message,
+        }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Câu hỏi của bạn đã được gửi thành công!');
+                // Optionally reset the form
+                document.getElementById('contactForm').reset();
+            } else {
+                alert('Đã xảy ra lỗi. Vui lòng thử lại.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Không thể kết nối với máy chủ.');
+        });
+});
+</script>

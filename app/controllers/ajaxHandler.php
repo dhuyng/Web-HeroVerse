@@ -124,6 +124,9 @@ switch ($ajaxAction) {
     case 'createUser':
         $authController->createUser();
             break;
+    case 'saveQuestion':
+        $authController->saveQuestion();
+            break;
     
         
     default:

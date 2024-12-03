@@ -550,5 +550,40 @@ class AuthController extends BaseController {
             echo json_encode(['success' => false, 'message' => 'Invalid request']);
         }
     }
+
+    public function saveQuestion(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+
+            // Get the question data from the request payload (JSON)
+            $data = json_decode(file_get_contents("php://input"), true);
+            error_log('-------------POST: ' . print_r($data, true));
+            $title = $data['title'];
+            $question = $data['question'];
+
+            error_log('-------------Question: ' . $title . ' ' . $question);
+
+            if (!$title || !$question) {
+                $response['message'] = 'Vui lòng điền đầy đủ thông tin.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Save the question to the database
+            $supportModel = new Support();
+            $saveSuccess = $supportModel->saveQuestion($title, $question);
+            if ($saveSuccess) {
+                $response['success'] = true;
+                $response['message'] = 'Câu hỏi của bạn đã được gửi thành công.';
+            } else {
+                $response['message'] = 'Có lỗi xảy ra khi gửi câu hỏi.';
+            }
+            // For now, we'll just return a success response
+            echo json_encode($response);
+            exit;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
     
 }
