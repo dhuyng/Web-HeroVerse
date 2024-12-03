@@ -20,8 +20,8 @@ $is_logged_in = isset($_SESSION['user']['id']); // Giả sử bạn lưu ID ngư
                         <li>Mở khóa một số màn chơi giới hạn</li>
                         <li>Hỗ trợ tiêu chuẩn</li>
                     </ul>
-                    <?php if (!$is_logged_in): ?>
-                            <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideỈnight fw-bold">Sign up for free</a> 
+                    <?php if (!isset($_SESSION['user'])): ?>
+                        <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 fw-bold">Sign up for free</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -37,7 +37,15 @@ $is_logged_in = isset($_SESSION['user']['id']); // Giả sử bạn lưu ID ngư
                         <li>Cơ hội nhận vật phẩm đặc biệt</li>
                         <li>Hỗ trợ ưu tiên</li>
                     </ul>
-                    <button class="btn btn-primary py-sm-3 px-sm-5 me-3 fw-bold unlock-plan" data-plan="Pro" data-price="10">Unlock Now</button>
+                    <?php if (!isset($_SESSION['user'])): ?>
+                        <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 fw-bold">Unlock Now</a>
+                    <?php else: ?>
+                        <?php if ($_SESSION['user']['subscription_type'] === 'pro' || $_SESSION['user']['subscription_type'] === 'premium'): ?>
+                            <button class="btn btn-secondary py-sm-3 px-sm-5 me-3 fw-bold" disabled>Unlocked</button>
+                        <?php else: ?>
+                            <button class="btn btn-primary py-sm-3 px-sm-5 me-3 fw-bold unlock-plan" data-plan="Pro" data-price="10">Unlock Now</button>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -53,12 +61,21 @@ $is_logged_in = isset($_SESSION['user']['id']); // Giả sử bạn lưu ID ngư
                         <li>Giảm giá khi các vật phẩm</li>
                         <li>Coupon quà tặng nhân dịp sinh nhật</li>
                     </ul>
-                    <button class="btn btn-primary py-sm-3 px-sm-5 me-3 fw-bold unlock-plan" data-plan="Premium" data-price="20">Unlock Now</button>
+                    <?php if (!isset($_SESSION['user'])): ?>
+                        <a href="login" class="btn btn-primary py-sm-3 px-sm-5 me-3 fw-bold">Unlock Now</a>
+                    <?php else: ?>
+                        <?php if ($_SESSION['user']['subscription_type'] === 'premium'): ?>
+                            <button class="btn btn-secondary py-sm-3 px-sm-5 me-3 fw-bold" disabled>Unlocked</button>
+                        <?php else: ?>
+                            <button class="btn btn-primary py-sm-3 px-sm-5 me-3 fw-bold unlock-plan" data-plan="Premium" data-price="20">Unlock Now</button>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <!-- Payment Modal -->
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">

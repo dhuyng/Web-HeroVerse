@@ -197,22 +197,24 @@ class TransactionController {
                 $status = $postdatajson["status"];
                 $user = new User();
                 if ($result = $user->completedRechargeHistory($apptransid, $status)) {
-                    $description = $result['description'];
-                    $plan = null;
-    
-                    // Match subscription plan from the description
-                    if (preg_match('/Subscription Plan: (\w+)/', $description, $matches)) {
-                        $plan = strtolower($matches[1]); // Extract plan name (e.g., "premium" or "pro")
-                    }
-    
-                    if ($plan) {
-                        // Update user tier if subscription plan is found
-                        $user->updateUserTier($result['userId'], $plan);
-                        $_SESSION['user']['subscription_type'] = $plan;
-                    } else {
-                        // Otherwise, update user balance
-                        $user->updateUserBalance($result['userId'], +$result['coins']);
-                        $_SESSION['user']['balance'] += $result['coins'];
+                    if ($status == 'completed') {
+                        $description = $result['description'];
+                        $plan = null;
+        
+                        // Match subscription plan from the description
+                        if (preg_match('/Subscription Plan: (\w+)/', $description, $matches)) {
+                            $plan = strtolower($matches[1]); // Extract plan name (e.g., "premium" or "pro")
+                        }
+        
+                        if ($plan) {
+                            // Update user tier if subscription plan is found
+                            $user->updateUserTier($result['userId'], $plan);
+                            $_SESSION['user']['subscription_type'] = $plan;
+                        } else {
+                            // Otherwise, update user balance
+                            $user->updateUserBalance($result['userId'], +$result['coins']);
+                            $_SESSION['user']['balance'] += $result['coins'];
+                        }
                     }
                     $response['status'] = 'success';
                     $response['message'] = 'Transaction processed successfully.';

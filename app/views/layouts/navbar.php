@@ -55,7 +55,15 @@ $isAdmin = isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'; //
         <!-- Account Dropdown (Right Aligned) -->
         <div class="d-flex align-items-center">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="public/img/account.png" alt="Account" class="rounded-circle" width="40" height="40">
+                <?php
+                if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
+                    $profilePicPath = 'public/img/avatar/' . $_SESSION['user']['profile_pic'];
+                    $profilePicPath = (file_exists($profilePicPath) && $_SESSION['user']['profile_pic']) ? $profilePicPath : 'public/img/account.png';
+                } else {
+                    $profilePicPath = 'public/img/account.png';
+                }
+                ?>
+                <img src="<?= $profilePicPath ?>" alt="Account" class="rounded-circle" width="40" height="40">
             </a>
             <ul class="dropdown-menu dropdown-menu-end bg-dark p-0 m-0" aria-labelledby="accountDropdown">
                 <?php if ($isLoggedIn && !$isAdmin): ?>
