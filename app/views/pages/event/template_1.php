@@ -283,19 +283,35 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Add new comments
                     data.comments.forEach(comment => {
                         const commentHtml = `
-                            <li class="list-group-item p-3 shadow-sm">
-                                <strong>${comment.username}</strong>
-                                <p>${comment.content.replace(/\n/g, '<br>')}</p>
-                                <small class="text-muted d-block">
-                                    ${new Date(comment.created_at).toLocaleString('en-US', {
-                                        month: 'long',
-                                        day: 'numeric',
-                                        year: 'numeric',
-                                        hour: 'numeric',
-                                        minute: '2-digit',
-                                        hour12: true,
-                                    })}
-                                </small>
+                            <li class="list-group-item p-3 shadow-sm" data-id="${comment.id}">
+                                <div class="comment-content">
+                                    <strong>${comment.username}</strong>
+                                    <p class="comment-text">${comment.content.replace(/\n/g, '<br>')}</p>
+                                    <small class="text-muted d-block">
+                                        ${new Date(comment.created_at).toLocaleString('en-US', {
+                                            month: 'long',
+                                            day: 'numeric',
+                                            year: 'numeric',
+                                            hour: 'numeric',
+                                            minute: '2-digit',
+                                            hour12: true,
+                                        })}
+                                    </small>
+                                </div>
+                                <div class="admin-edit-controls d-none">
+                                    <textarea class="form-control edit-comment-text">${comment.content}</textarea>
+                                    <div class="mt-2">
+                                        <label for="visibility-${comment.id}">Visibility:</label>
+                                        <select id="visibility-${comment.id}" class="form-select comment-visibility">
+                                            <option value="visible" ${comment.status === 'visible' ? 'selected' : ''}>Visible</option>
+                                            <option value="hidden" ${comment.status === 'hidden' ? 'selected' : ''}>Hidden</option>
+                                        </select>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-success save-comment">Save</button>
+                                        <button class="btn btn-sm btn-secondary cancel-edit">Cancel</button>
+                                    </div>
+                                </div>
                             </li>`;
                         commentsList.innerHTML += commentHtml;
                     });
@@ -309,6 +325,52 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error loading comments:', error));
     };
 
+    // Handle comment actions with delegation
+    commentsList.addEventListener('click', (event) => {
+        const commentItem = event.target.closest('.list-group-item');
+        if (!commentItem) return;
+
+        const isAdmin = <?= json_encode(isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin') ?>;
+
+        if (isAdmin) {
+            const editControls = commentItem.querySelector('.admin-edit-controls');
+            console.log('editControls classList:', editControls.classList);
+            const commentTextElement = commentItem.querySelector('.comment-text');
+
+            if (event.target.classList.contains('save-comment')) {
+                // Save comment functionality
+                const newContent = editControls.querySelector('.edit-comment-text').value;
+                const newStatus = editControls.querySelector('.comment-visibility').value;
+                const commentId = commentItem.getAttribute('data-id');
+
+                fetch(`index.php?ajax=editComment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: commentId, content: newContent, status: newStatus })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        commentTextElement.innerHTML = newContent.replace(/\n/g, '<br>');
+                        alert('Comment updated successfully!');
+                    } else {
+                        alert('Failed to update comment.');
+                    }
+                    editControls.classList.add('d-none');
+                    commentTextElement.style.display = 'block';
+                });
+            } else if (event.target.classList.contains('cancel-edit')) {
+                // Cancel edit functionality
+                editControls.classList.add('d-none');
+                commentTextElement.style.display = 'block';
+            } else if (editControls.classList.contains('d-none')) {
+                // Toggle edit mode
+                editControls.classList.remove('d-none');
+                commentTextElement.style.display = 'none';
+            } 
+        }
+    });
+
     // Attach click event to pagination buttons
     paginationControls.addEventListener('click', (event) => {
         if (event.target.tagName === 'BUTTON') {
@@ -317,74 +379,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-    const commentsList = document.getElementById('comments-list');
-
-    commentsList.addEventListener('click', (event) => {
-        const commentItem = event.target.closest('.list-group-item');
-        console.log(commentItem);
-        console.log(event.target);
-        if (!commentItem) return;
-
-        const isAdmin = <?= json_encode(isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin') ?>;
-
-        if (isAdmin) {
-            const editControls = commentItem.querySelector('.admin-edit-controls');
-            const commentTextElement = commentItem.querySelector('.comment-text');
-
-            if (!editControls.classList.contains('d-none')) return;
-
-            // Enable edit mode
-            editControls.classList.remove('d-none');
-            commentTextElement.style.display = 'none';
-
-            // Cancel edit functionality
-            const cancelButton = editControls.querySelector('.cancel-edit');
-            if (!cancelButton.hasListener) {
-                cancelButton.addEventListener('click', (event) => {
-                    event.stopPropagation();
-                    console.log("clicked");
-                    editControls.classList.add('d-none');
-                    commentTextElement.style.display = 'block';
-                });
-                cancelButton.hasListener = true;
-            }
-                
-
-            // Save comment functionality
-            const saveButton = editControls.querySelector('.save-comment');
-            if (!saveButton.hasListener) {
-                saveButton.addEventListener('click', (event) => {
-                    console.log('+1 click');
-                    event.stopPropagation();
-                    const newContent = editControls.querySelector('.edit-comment-text').value;
-                    const newStatus = editControls.querySelector('.comment-visibility').value;
-                    const commentId = commentItem.getAttribute('data-id');
-
-                    fetch(`index.php?ajax=editComment`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id: commentId, content: newContent, status: newStatus })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            commentTextElement.textContent = newContent;
-                            alert('Comment updated successfully!');
-                        } else {
-                            alert('Failed to update comment.');
-                        }
-                        editControls.classList.add('d-none');
-                        commentTextElement.style.display = 'block';
-                    });
-                });
-                saveButton.hasListener = true;
-            }
-        }
-    });
-});
-
 </script>
