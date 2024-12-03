@@ -50,7 +50,9 @@
 
     <!-- Nút thêm người dùng mới -->
     <div class="text-center mt-4">
-        <button class="btn btn-primary btn-lg shadow">Thêm Người Dùng Mới</button>
+        <button class="btn btn-primary btn-lg shadow" data-bs-toggle="modal" data-bs-target="#newUserModal">
+            Thêm Người Dùng Mới
+        </button>
     </div>
 
 <!-- Modal -->
@@ -75,8 +77,8 @@
                     <div class="mb-3">
                         <label for="role" class="form-label">Vai trò</label>
                         <select class="form-select" id="role" name="role" required>
-                            <option value="admin">Admin</option>
                             <option value="member">Member</option>
+                            <option value="admin">Admin</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -97,7 +99,149 @@
     </div>
 </div>
 
+<!-- New User Modal -->
+<div class="modal fade" id="newUserModal" tabindex="-1" aria-labelledby="newUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newUserModalLabel">Thêm Người Dùng Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newUserForm">
+                    <div class="mb-3">
+                        <label for="newUsername" class="form-label">Tên Người Dùng</label>
+                        <input type="text" class="form-control" id="newUsername" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="newEmail" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Mật Khẩu</label>
+                        <input type="password" class="form-control" id="newPassword" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newRole" class="form-label">Vai trò</label>
+                        <select class="form-select" id="newRole" name="role" required>
+                            <option value="member">Member</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newSubscription" class="form-label">Loại Tài Khoản</label>
+                        <select class="form-select" id="newSubscription" name="subscription" required>
+                            <option value="basic">Basic</option>
+                            <option value="pro">Pro</option>
+                            <option value="premium">Premium</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary" id="createUserBtn">Tạo Người Dùng</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+</div>
+
+<script>
+document.getElementById('role').addEventListener('change', function () {
+    const role = this.value;
+    const subscriptionSelect = document.getElementById('subscription');
+    
+    // Clear all options in the subscription dropdown
+    subscriptionSelect.innerHTML = '';
+
+    if (role === 'admin') {
+        // Add only the "Basic" option for Admin
+        subscriptionSelect.innerHTML = '<option value="basic">Basic</option>';
+    } else if (role === 'member') {
+        // Add all subscription options for Member
+        subscriptionSelect.innerHTML = `
+            <option value="basic">Basic</option>
+            <option value="pro">Pro</option>
+            <option value="premium">Premium</option>
+        `;
+    }
+});
+</script>
+
+<script>
+document.getElementById('newRole').addEventListener('change', function () {
+    const role = this.value;
+    const subscriptionSelect = document.getElementById('newSubscription');
+    
+    // Clear all options in the subscription dropdown
+    subscriptionSelect.innerHTML = '';
+
+    if (role === 'admin') {
+        // Add only the "Basic" option for Admin
+        subscriptionSelect.innerHTML = '<option value="basic">Basic</option>';
+    } else if (role === 'member') {
+        // Add all subscription options for Member
+        subscriptionSelect.innerHTML = `
+            <option value="basic">Basic</option>
+            <option value="pro">Pro</option>
+            <option value="premium">Premium</option>
+        `;
+    }
+});
+</script>
+
+<script>
+    document.getElementById('createUserBtn').addEventListener('click', function () {
+    const form = document.getElementById('newUserForm');
+    const formData = new FormData(form);
+
+    fetch('index.php?ajax=createUser', {
+        method: 'POST',
+        body: JSON.stringify(Object.fromEntries(formData)),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok.');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Add the new user to the table
+                const userTable = document.getElementById('userTable');
+                const row = document.createElement('tr');
+                row.classList.add('user-row');
+                const lastRow = userTable.rows.length > 0 ? parseInt(userTable.rows[userTable.rows.length - 1].cells[0].textContent) + 1 : 1;
+                row.innerHTML = `
+                    <td>${lastRow}</td>
+                    <td>${formData.get('username')}</td>
+                    <td>${formData.get('email')}</td>
+                    <td>${formData.get('role')}</td>
+                    <td>${formData.get('subscription')}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-warning mx-1">Sửa</button>
+                        <button class="btn btn-sm btn-danger mx-1 delete-btn">Xóa</button>
+                    </td>
+                `;
+                userTable.appendChild(row);
+
+                alert('Người dùng mới đã được thêm.');
+                bootstrap.Modal.getInstance(document.getElementById('newUserModal')).hide();
+            } else {
+                alert(data.message || 'Không thể thêm người dùng mới.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi thêm người dùng mới.');
+        });
+});
+</script>
 
 <script>
 document.addEventListener('click', function (event) {

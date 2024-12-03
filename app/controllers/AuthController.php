@@ -462,7 +462,7 @@ class AuthController extends BaseController {
             }
 
             // Validate role
-            if (!in_array($role, ['Member', 'admin'])) {
+            if (!in_array($role, ['member', 'admin'])) {
                 $response['message'] = 'Role is invalid.';
                 echo json_encode($response);
                 exit;
@@ -484,6 +484,64 @@ class AuthController extends BaseController {
                 $response['message'] = 'User role updated successfully.';
             } else {
                 $response['message'] = 'Failed to update user role.';
+            }
+
+            echo json_encode($response);
+            exit;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
+
+    public function createUser(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+
+            // Get the user ID from the request payload (JSON)
+            $data = json_decode(file_get_contents("php://input"), true);
+            $username = $data['username'];
+            $email = $data['email'];
+            $password = $data['password'];
+            $role = $data['role'];
+            $subscription = $data['subscription'];
+
+            error_log('-------------Information: ' . $username . ' ' . $email . ' ' . $role . ' ' . $subscription);
+
+            if (!$username) {
+                $response['message'] = 'Username is required.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate email
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $response['message'] = 'Địa chỉ email không hợp lệ.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate role
+            if (!in_array($role, ['member', 'admin'])) {
+                $response['message'] = 'Role is invalid.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate subscription
+            if (!in_array($subscription, ['basic', 'premium', 'pro'])) {
+                $response['message'] = 'Subscription is invalid.';
+                echo json_encode($response);
+                exit;
+            }
+
+            $userModel = new User();
+            $createSuccess = $userModel->createUser($username, $email, $password, $role, $subscription);
+
+            if ($createSuccess) {
+                $response['success'] = true;
+                $response['message'] = 'User created successfully.';
+            } else {
+                $response['message'] = 'Failed to create user.';
             }
 
             echo json_encode($response);

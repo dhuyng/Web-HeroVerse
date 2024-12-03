@@ -121,6 +121,9 @@ switch ($ajaxAction) {
     case 'coinForPayment':
         $dashboardController->coinForPayment();
             break;
+    case 'createUser':
+        $authController->createUser();
+            break;
     
         
     default:
