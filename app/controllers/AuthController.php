@@ -34,31 +34,61 @@ class AuthController extends BaseController {
 
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = trim($_POST['username']);
-            $password = $_POST['password'];
-            $userModel = new User();
-            $user = $userModel->login($username, $password);
-
-            if ($user) {
-                // After successful login in the AuthController
-                $_SESSION['user'] = $user;  // Store user data
-                $_SESSION['logged_in'] = true;  // Indicate the user is logged in
-                if ($user['role'] === 'admin') {
-                    // Nếu là admin, chuyển đến trang dashboard
-                    header("Location: dashboard");
-                } else {
-                    // Nếu là user, chuyển đến trang home
-                    header("Location: home");
-                }
+            // Check Anti-CSRF token
+            if (!checkToken($_POST['user_token'], $_SESSION['session_token'], 'info')) {
+                echo json_encode(['success' => false, 'message' => 'CSRF token is incorrect']);
                 exit();
-            } else {
-                $_SESSION['error'] = "Invalid username or password.";
-                $this->render('login', 'Login - HeroVerse');
             }
-        } else {
-            $this->render('login', 'Login - HeroVerse');
+    
+            $username = stripslashes(trim($_POST['username']));
+            $password = stripslashes($_POST['password']);
+            $total_failed_login = 3;
+            $lockout_time = 15; // in minutes
+            $userModel = new User();
+    
+            $user = $userModel->getUserByUsername($username);
+    
+            if ($user) {
+                // Check if account is locked
+                if ($user['failed_login'] >= $total_failed_login) {
+                    $lastLogin = strtotime($user['last_login']);
+                    $timeout = $lastLogin + ($lockout_time * 60);
+                    if (time() < $timeout) {
+                        echo json_encode(['success' => false, 'message' => 'Account is locked. Please try again later.']);
+                        exit();
+                    }
+                }
+    
+                // Verify password
+                if (password_verify($password, $user['password'])) {
+                    $_SESSION['user'] = $user;
+                    $_SESSION['logged_in'] = true;
+    
+                    // Reset failed login attempts
+                    $userModel->resetFailedLogin($username);
+    
+                    $redirect = $user['role'] === 'admin' ? 'dashboard' : 'home';
+                    echo json_encode(['success' => true, 'redirect' => $redirect]);
+                    exit();
+                } else {
+                    $userModel->incrementFailedLogin($username);
+                }
+            }
+    
+            echo json_encode(['success' => false, 'message' => 'Invalid username or password.']);
         }
     }
+
+    public function unlockAccount() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username = stripslashes(trim($_POST['username']));
+            $userModel = new User();
+            // Reset failed login attempts
+            $userModel->resetFailedLogin($username);
+            echo json_encode(['success' => true, 'message' => 'Account unlocked!']);
+        }
+    }
+    
 
     public function logout() {
         session_unset();
@@ -75,6 +105,11 @@ class AuthController extends BaseController {
             
             // Get the current password from the request payload (JSON)
             $data = json_decode(file_get_contents("php://input"), true);
+            // Check Anti-CSRF token
+	        if (!checkToken( $data[ 'user_token' ], $_SESSION[ 'session_token' ], 'info' )) {
+                echo json_encode(['success' => false, 'message' => 'CSRF token is incorrect']);
+                exit();
+            }
             $currentPassword = $data['password'];
             
             // Create the user model instance
@@ -98,75 +133,110 @@ class AuthController extends BaseController {
             $confirmPassword = $_POST['confirmPassword'] ?? null;
             $twoFA = isset($_POST['2fa']) ? 1 : 0;
             $profilePic = $_FILES['profile_pic'] ?? null;
-
+    
             // Validate email
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $response['message'] = 'Địa chỉ email không hợp lệ.';
                 echo json_encode($response);
-                exit;
+                exit();
             }
-
+    
             // Validate password
             if ($newPassword && $newPassword !== $confirmPassword) {
                 $response['message'] = 'Mật khẩu mới và xác nhận mật khẩu không khớp.';
                 echo json_encode($response);
-                exit;
+                exit();
             }
-
-            // Handle file upload
+    
+            // Handle file upload with enhanced security
             $uploadedFileName = null;
             if ($profilePic && $profilePic['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = 'public/img/avatar/';
-                if (!is_dir($uploadDir)) {
-                    if (!mkdir($uploadDir, 0755, true)) {
-                        $response['message'] = 'Không thể tạo thư mục để tải ảnh lên.';
+                $uploadedName = $profilePic['name'];
+                $uploadedExt = strtolower(pathinfo($uploadedName, PATHINFO_EXTENSION));
+                $uploadedSize = $profilePic['size'];
+                $uploadedType = $profilePic['type'];
+                $uploadedTmp = $profilePic['tmp_name'];
+    
+                // Allowed extensions and MIME types
+                $allowedExtensions = ['jpg', 'jpeg', 'png'];
+                $allowedTypes = ['image/jpeg', 'image/png'];
+    
+                if (in_array($uploadedExt, $allowedExtensions) &&
+                    in_array($uploadedType, $allowedTypes) &&
+                    $uploadedSize < 10000000 && // Limit size to 10 MB
+                    getimagesize($uploadedTmp)) {
+    
+                    // Generate secure file name and temporary path
+                    $tempFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . md5(uniqid() . $uploadedName) . '.' . $uploadedExt;
+                    $uploadDir = 'public/img/avatar/';
+                    $uploadedFileName = md5(uniqid() . $uploadedName) . '.' . $uploadedExt;
+                    $uploadFilePath = $uploadDir . $uploadedFileName;
+    
+                    // Strip metadata and re-encode the image
+                    if ($uploadedType === 'image/jpeg') {
+                        $img = imagecreatefromjpeg($uploadedTmp);
+                        imagejpeg($img, $tempFile, 100);
+                    } else {
+                        $img = imagecreatefrompng($uploadedTmp);
+                        imagepng($img, $tempFile, 9);
+                    }
+                    imagedestroy($img);
+    
+                    // Move the sanitized file to the target directory
+                    if (!is_dir($uploadDir)) {
+                        if (!mkdir($uploadDir, 0755, true)) {
+                            $response['message'] = 'Không thể tạo thư mục để tải ảnh lên.';
+                            echo json_encode($response);
+                            exit();
+                        }
+                    }
+                    if (!rename($tempFile, $uploadFilePath)) {
+                        $response['message'] = 'Không thể tải lên ảnh đại diện.';
                         echo json_encode($response);
-                        exit;
+                        exit();
                     }
-                }
-                $uploadedFileName = uniqid('profile_', true) . '.' . pathinfo($profilePic['name'], PATHINFO_EXTENSION);
-                $uploadFilePath = $uploadDir . $uploadedFileName;
-
-                if (!move_uploaded_file($profilePic['tmp_name'], $uploadFilePath)) {
-                    $response['message'] = 'Không thể tải lên ảnh đại diện.';
+    
+                    // Delete old profile picture
+                    if (!empty($_SESSION['user']['profile_pic'])) {
+                        $oldFilePath = $uploadDir . $_SESSION['user']['profile_pic'];
+                        if (file_exists($oldFilePath)) {
+                            unlink($oldFilePath);
+                        }
+                    }
+                } else {
+                    $response['message'] = 'Ảnh đại diện không hợp lệ. Chỉ chấp nhận JPEG hoặc PNG dưới 10MB.';
                     echo json_encode($response);
-                    exit;
-                }
-                // Delete the old profile picture if exists
-                if (!empty($_SESSION['user']['profile_pic'])) {
-                    $oldFilePath = $uploadDir . $_SESSION['user']['profile_pic'];
-                    if (file_exists($oldFilePath)) {
-                        unlink($oldFilePath);
-                    }
+                    exit();
                 }
             } elseif ($profilePic && $profilePic['error'] !== UPLOAD_ERR_NO_FILE) {
                 $response['message'] = 'Có lỗi xảy ra khi tải lên ảnh đại diện.';
                 echo json_encode($response);
-                exit;
+                exit();
             }
-
+    
             // Update user info
-            $userId = $_SESSION['user']['id']; 
-
+            $userId = $_SESSION['user']['id'];
+    
             $userModel = new User();
             $updateSuccess = $userModel->updateUserInfo($userId, $email, $newPassword, $uploadedFileName, $twoFA);
-
+    
             if ($updateSuccess) {
                 // Update session data
                 $_SESSION['user']['email'] = $email;
                 $_SESSION['user']['profile_pic'] = $uploadedFileName ?: $_SESSION['user']['profile_pic'];
                 $_SESSION['user']['two_fa_enabled'] = $twoFA;
-
+    
                 $response['success'] = true;
                 $response['message'] = 'Cập nhật thông tin thành công.';
             } else {
                 $response['message'] = 'Cập nhật thông tin thất bại.';
             }
-
+    
             echo json_encode($response);
-            exit;
+            exit();
         }
     }
+    
     
     public function updateAdminInfo() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -182,36 +252,70 @@ class AuthController extends BaseController {
                 exit;
             }
 
-            // Handle file upload
+            // Handle file upload with enhanced security
             $uploadedFileName = null;
             if ($profilePic && $profilePic['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = 'public/img/avatar/';
-                if (!is_dir($uploadDir)) {
-                    if (!mkdir($uploadDir, 0755, true)) {
-                        $response['message'] = 'Không thể tạo thư mục để tải ảnh lên.';
+                $uploadedName = $profilePic['name'];
+                $uploadedExt = strtolower(pathinfo($uploadedName, PATHINFO_EXTENSION));
+                $uploadedSize = $profilePic['size'];
+                $uploadedType = $profilePic['type'];
+                $uploadedTmp = $profilePic['tmp_name'];
+    
+                // Allowed extensions and MIME types
+                $allowedExtensions = ['jpg', 'jpeg', 'png'];
+                $allowedTypes = ['image/jpeg', 'image/png'];
+    
+                if (in_array($uploadedExt, $allowedExtensions) &&
+                    in_array($uploadedType, $allowedTypes) &&
+                    $uploadedSize < 10000000 && // Limit size to 10 MB
+                    getimagesize($uploadedTmp)) {
+    
+                    // Generate secure file name and temporary path
+                    $tempFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . md5(uniqid() . $uploadedName) . '.' . $uploadedExt;
+                    $uploadDir = 'public/img/avatar/';
+                    $uploadedFileName = md5(uniqid() . $uploadedName) . '.' . $uploadedExt;
+                    $uploadFilePath = $uploadDir . $uploadedFileName;
+    
+                    // Strip metadata and re-encode the image
+                    if ($uploadedType === 'image/jpeg') {
+                        $img = imagecreatefromjpeg($uploadedTmp);
+                        imagejpeg($img, $tempFile, 100);
+                    } else {
+                        $img = imagecreatefrompng($uploadedTmp);
+                        imagepng($img, $tempFile, 9);
+                    }
+                    imagedestroy($img);
+    
+                    // Move the sanitized file to the target directory
+                    if (!is_dir($uploadDir)) {
+                        if (!mkdir($uploadDir, 0755, true)) {
+                            $response['message'] = 'Không thể tạo thư mục để tải ảnh lên.';
+                            echo json_encode($response);
+                            exit();
+                        }
+                    }
+                    if (!rename($tempFile, $uploadFilePath)) {
+                        $response['message'] = 'Không thể tải lên ảnh đại diện.';
                         echo json_encode($response);
-                        exit;
+                        exit();
                     }
-                }
-                $uploadedFileName = uniqid('profile_', true) . '.' . pathinfo($profilePic['name'], PATHINFO_EXTENSION);
-                $uploadFilePath = $uploadDir . $uploadedFileName;
-
-                if (!move_uploaded_file($profilePic['tmp_name'], $uploadFilePath)) {
-                    $response['message'] = 'Không thể tải lên ảnh đại diện.';
+    
+                    // Delete old profile picture
+                    if (!empty($_SESSION['user']['profile_pic'])) {
+                        $oldFilePath = $uploadDir . $_SESSION['user']['profile_pic'];
+                        if (file_exists($oldFilePath)) {
+                            unlink($oldFilePath);
+                        }
+                    }
+                } else {
+                    $response['message'] = 'Ảnh đại diện không hợp lệ. Chỉ chấp nhận JPEG hoặc PNG dưới 10MB.';
                     echo json_encode($response);
-                    exit;
-                }
-                // Delete the old profile picture if exists
-                if (!empty($_SESSION['user']['profile_pic'])) {
-                    $oldFilePath = $uploadDir . $_SESSION['user']['profile_pic'];
-                    if (file_exists($oldFilePath)) {
-                        unlink($oldFilePath);
-                    }
+                    exit();
                 }
             } elseif ($profilePic && $profilePic['error'] !== UPLOAD_ERR_NO_FILE) {
                 $response['message'] = 'Có lỗi xảy ra khi tải lên ảnh đại diện.';
                 echo json_encode($response);
-                exit;
+                exit();
             }
 
             // Update user info
@@ -398,7 +502,7 @@ class AuthController extends BaseController {
             // Get the support ID from the request payload (JSON)
             $data = json_decode(file_get_contents("php://input"), true);
             $supportId = $data['id'];
-
+            $userId = $_SESSION['user']['id'];
 
             if (!$supportId) {
                 $response['message'] = 'Support ID is required.';
@@ -407,15 +511,83 @@ class AuthController extends BaseController {
             }
 
             $userModel = new User();
-            $toggleSuccess = $userModel->toggleSupportStatus($supportId);
+            $toggleSuccess = $userModel->toggleSupportStatus($supportId, $userId);
+            $userInfo = $userModel->getUserById($userId);
 
             error_log('-------------toggleSuccess: ' . $toggleSuccess);
 
             if ($toggleSuccess) {
                 $response['success'] = true;
+                $response['data'] = ['username' => $userInfo['username'], 'email' => $userInfo['email']];
                 $response['message'] = 'Support request status updated successfully.';
             } else {
                 $response['message'] = 'Failed to update support request status.';
+            }
+
+            echo json_encode($response);
+            exit;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
+
+    public function updateUser(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+
+            // Get the user ID from the request payload (JSON)
+            $data = json_decode(file_get_contents("php://input"), true);
+            $userId = $data['id'];
+            $username = $data['username'];
+            $email = $data['email'];
+            $role = $data['role'];
+            $subscription = $data['subscription'];
+
+            error_log('-------------Information: ' . $userId . ' ' . $username . ' ' . $email . ' ' . $role . ' ' . $subscription);
+
+
+            if (!$userId) {
+                $response['message'] = 'User ID is required.';
+                echo json_encode($response);
+                exit;
+            }
+
+            if (!$username) {
+                $response['message'] = 'Username is required.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate email
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $response['message'] = 'Địa chỉ email không hợp lệ.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate role
+            if (!in_array($role, ['Member', 'admin'])) {
+                $response['message'] = 'Role is invalid.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate subscription
+            if (!in_array($subscription, ['basic', 'premium', 'pro'])) {
+                $response['message'] = 'Subscription is invalid.';
+                echo json_encode($response);
+                exit;
+            }
+
+
+            $userModel = new User();
+            $updateSuccess = $userModel->updateUser($userId, $username, $email, $role, $subscription);
+
+            if ($updateSuccess) {
+                $response['success'] = true;
+                $response['message'] = 'User role updated successfully.';
+            } else {
+                $response['message'] = 'Failed to update user role.';
             }
 
             echo json_encode($response);

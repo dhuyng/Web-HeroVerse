@@ -4,19 +4,92 @@
 <!-- Xác thực role User hay Admin ở CSDL -->
 <div class="login-form bg-dark">
     <h2 class="display-5 text-white">Đăng nhập</h2>
-    <?php
-    if (isset($_SESSION['error'])) {
-        echo "<p class='error-message'>{$_SESSION['error']}</p>";
-        unset($_SESSION['error']);
-    }
-    ?>
-    <form class="bg-dark text-center" action="login" method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
+    <div id="error-message" class="error-message"></div>
+    <form id="login-form" class="bg-dark text-center">
+        <input type="text" id="username" name="username" placeholder="Username" required>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <input type="hidden" id="user_token" name="user_token" value="<?= $_SESSION['session_token'] ?>">
         <button type="submit" class="btn btn-primary">LOG IN</button>
     </form>
     <p> Nếu bạn chưa có tài khoản <a href="register">Đăng ký ở đây</a>.</p>
 </div>
+
+<script>
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        try {
+            const response = await fetch('index.php?ajax=login', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                window.location.href = result.redirect;
+            } else {
+                document.getElementById('error-message').textContent = result.message;
+            }
+        } catch (error) {
+            document.getElementById('error-message').textContent = 'An error occurred. Please try again later.';
+        }
+    });
+</script>
+
+<!-- Unlock Account -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#unlockModal">
+  Unstuck here!
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="unlockModal" tabindex="-1" aria-labelledby="unlockModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="unlockModalLabel">Unlock Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you stuck?</p>
+                <form id="unlock-form">
+                    <div class="mb-3">
+                        <label for="unlockUsername" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="unlockUsername" name="username" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Unlock</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div id="unlock-message" class="unlock-message"></div>
+                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Thanks!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.getElementById('unlock-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        try {
+            const response = await fetch('index.php?ajax=unlockAccount', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById('unlock-message').textContent = 'You are unlocked!';
+            } else {
+                document.getElementById('unlock-message').textContent = result.message;
+            }
+        } catch (error) {
+            document.getElementById('unlock-message').textContent = 'An error occurred. Please try again later.';
+        }
+    });
+</script>
 
 <style>
     #bgCanvas {
