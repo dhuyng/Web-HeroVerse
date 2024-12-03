@@ -1,3 +1,23 @@
+<style>
+/* Giới hạn chiều dài của cột "Câu Hỏi" */
+.table td:nth-child(5) {
+    max-width: 400px; /* Đặt chiều rộng tối đa cho cột, có thể điều chỉnh */
+    white-space: nowrap; /* Không xuống dòng */
+    overflow: hidden; /* Ẩn nội dung tràn */
+    text-overflow: ellipsis; /* Thêm dấu "..." */
+}
+</style>
+
+<style>
+/* Giới hạn chiều dài của cột "Tiêu đề" */
+.table td:nth-child(4) {
+    max-width: 200px; /* Đặt chiều rộng tối đa cho cột, có thể điều chỉnh */
+    white-space: nowrap; /* Không xuống dòng */
+    overflow: hidden; /* Ẩn nội dung tràn */
+    text-overflow: ellipsis; /* Thêm dấu "..." */
+}
+</style>
+
 <div class="container mt-5">
     <h3 class="text-center mb-4 text-primary">Hỗ Trợ Khách Hàng</h3>
 
@@ -16,8 +36,8 @@
                 <table class="table table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th id = 'support'>ID</th>
-                            <th>Họ Tên</th>
+                            <th>ID</th>
+                            <th>Người xử lý</th>
                             <th>Email</th>
                             <th>Tiêu Đề</th>
                             <th>Câu Hỏi</th>
@@ -25,7 +45,7 @@
                             <th class="text-center">Hành Động</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody  id = 'support'>
                         <?php
                         // Lọc kết quả theo từ khóa tìm kiếm
                         $search = isset($_GET['search']) ? strtolower(trim($_GET['search'])) : '';
@@ -66,8 +86,65 @@
             </div>
         </div>
     </div>
+
+<!-- Modal Template -->
+<div class="modal fade" id="viewDetailModal" tabindex="-1" aria-labelledby="viewDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewDetailModalLabel">Chi Tiết Hỗ Trợ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>ID:</strong> <span id="modalSupportId"></span></p>
+                <p><strong>Người xử lý:</strong> <span id="modalSupportName"></span></p>
+                <p><strong>Email:</strong> <span id="modalSupportEmail"></span></p>
+                <p><strong>Tiêu Đề:</strong> <span id="modalSupportTitle"></span></p>
+                <p><strong>Câu Hỏi:</strong> <span id="modalSupportQuestion"></span></p>
+                <p><strong>Trạng Thái:</strong> <span id="modalSupportStatus"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
 </div>
 
+
+</div>
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', function (event) {
+        if (event.target.matches('.btn-primary[data-bs-target^="#supportModal-"]')) {
+            const row = event.target.closest('tr');
+            const supportId = row.querySelector('.support-id').textContent.trim();
+            const supportName = row.querySelector('.support-username').textContent.trim();
+            const supportEmail = row.querySelector('.support-email').textContent.trim();
+            const supportTitle = row.querySelector('td:nth-child(4)').textContent.trim();
+            const supportQuestion = row.querySelector('td:nth-child(5)').textContent.trim();
+            const supportStatus = row.querySelector('.toggle-status-btn').textContent.trim();
+
+            // Populate modal
+            document.getElementById('modalSupportId').textContent = supportId;
+            document.getElementById('modalSupportName').textContent = supportName;
+            document.getElementById('modalSupportEmail').textContent = supportEmail;
+            document.getElementById('modalSupportTitle').textContent = supportTitle;
+            document.getElementById('modalSupportQuestion').textContent = supportQuestion;
+            document.getElementById('modalSupportStatus').textContent = supportStatus;
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('viewDetailModal'));
+            modal.show();
+        }
+    });
+});
+
+
+</script>
 
 <!-- Modal -->
 
@@ -100,11 +177,21 @@
                             0: "Chưa Xử Lý"
                         };
 
+                        const statusEmail = {
+                            1: support.email,
+                            0: "_________"
+                        };
+
+                        const statusUsername = {
+                            1: support.username,
+                            0: "_________"
+                        };
+
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td class="support-id">${support.id}</td>
-                            <td>${support.username}</td>
-                            <td>${support.email}</td>
+                            <td class="support-username">${statusUsername[support.is_processed]}</td>
+                            <td class="support-email">${statusEmail[support.is_processed]}</td>
                             <td>${support.title}</td>
                             <td>${support.question}</td>
                             <td>
@@ -272,12 +359,29 @@ function toggleSupportStatus(supportId, button) {
                     0: "Chưa Xử Lý"
                 };
 
+                let newTextStatus;
+                let newClassStatus;
+                let newEmailStatus = "_________";
+                let newUsernameStatus = "_________";
+                
             if (data.success) {
-                // Update button text based on the new status
-                const newTextStatus = button.textContent === statusText[1] ? statusText[0] : statusText[1];
-                const newClassStatus = button.textContent === statusText[1] ? statusClass[0] : statusClass[1];
+                if(button.textContent === statusText[1]){
+                    newTextStatus = statusText[0];
+                    newClassStatus = statusClass[0];
+                } else {
+                    newTextStatus = statusText[1];
+                    newClassStatus = statusClass[1];
+                    newEmailStatus = data.data.email;
+                    newUsernameStatus = data.data.username;
+                }
                 button.textContent = newTextStatus;
                 button.className = `badge toggle-status-btn ${newClassStatus}`;
+
+                // Change the email and username in row
+                const row = button.closest('tr');
+                row.children[1].textContent = newUsernameStatus;
+                row.children[2].textContent = newEmailStatus;
+
                 alert(`Status updated to: ${newTextStatus}`);
             } else {
                 alert(data.message || 'Failed to toggle support status.');

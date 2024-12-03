@@ -283,7 +283,7 @@ class User {
 
         // Get all users
         public function getAllUsers(): array | bool {
-            $query = "SELECT id, username, email, role FROM users";
+            $query = "SELECT * FROM users";
             
             try {
                 $stmt = mysqli_prepare($this->db, $query);
@@ -313,7 +313,7 @@ class User {
         }
 
         public function getAllSupports() {
-            $query = "SELECT support.id, users.username, users.email, support.title, support.question, support.is_processed FROM support INNER JOIN users ON support.user_id = users.id";
+            $query = "SELECT support.id, users.username, users.email, support.title, support.question, support.is_processed FROM support LEFT JOIN users ON support.user_id = users.id";
         $stmt = mysqli_prepare($this->db, $query);
     
         try {
@@ -373,18 +373,76 @@ class User {
         return false;
     }
     
-    public function toggleSupportStatus($supportId) {
+    public function toggleSupportStatus($supportId, $userId) {
         // Query to toggle the is_processed field
-        $query = "UPDATE support SET is_processed = NOT is_processed WHERE id = ?";
+        $query = "UPDATE support 
+        SET 
+            is_processed = NOT is_processed,
+            user_id = CASE 
+                        WHEN is_processed = 0 THEN NULL 
+                        ELSE ? 
+                      END 
+        WHERE id = ?";
         $stmt = mysqli_prepare($this->db, $query);
     
         if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "i", $supportId);
+            mysqli_stmt_bind_param($stmt, "ii",$userId,$supportId);
             return mysqli_stmt_execute($stmt);
         }
     
         return false;
     }  
+
+    public function updateUser($userId, $username, $email, $role, $subscriptionType) {
+        $query = "UPDATE users SET username = ?, email = ?, role = ?, subscription_type = ? WHERE id = ?";
+        $stmt = mysqli_prepare($this->db, $query);
+    
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "ssssi", $username, $email, $role, $subscriptionType, $userId);
+            return mysqli_stmt_execute($stmt);
+        }
+    
+        return false;
+    }
+
+    public function countUsers() {
+        error_log("--------------countUsers");
+        $query = "SELECT COUNT(*) as count FROM users";
+        $stmt = mysqli_prepare($this->db, $query);
+    
+        if ($stmt) {
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            $count = mysqli_fetch_assoc($result)['count'];
+            mysqli_stmt_close($stmt);
+            return $count;
+        }
+    
+        return false;
+    }
+
+    public function countUserbyMonth(){
+        $query = "SELECT 
+                        DATE_FORMAT(created_at, '%Y-%m') AS month, 
+                        COUNT(*) AS user_count
+                    FROM 
+                        users
+                    GROUP BY 
+                        DATE_FORMAT(created_at, '%Y-%m')
+                    ORDER BY 
+                        month;";
+        $stmt = mysqli_prepare($this->db, $query);
+    
+        if ($stmt) {
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            $count = mysqli_fetch_all($result, MYSQLI_ASSOC);
+            mysqli_stmt_close($stmt);
+            return $count;
+        }
+    
+        return false;
+    }
 
     public function addHeroToUser($userId, $heroId) {
         $query = "INSERT INTO user_heroes (user_id, hero_id) VALUES (?, ?)";

@@ -22,6 +22,7 @@
                     <th>Tên người dùng</th>
                     <th>Email</th>
                     <th>Vai trò</th>
+                    <th>Loại tài khoản</th>
                     <th class="text-center">Hành động</th>
                 </tr>
             </thead>
@@ -51,7 +52,125 @@
     <div class="text-center mt-4">
         <button class="btn btn-primary btn-lg shadow">Thêm Người Dùng Mới</button>
     </div>
+
+<!-- Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Chỉnh Sửa Người Dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId" name="id">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Tên Người Dùng</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Vai trò</label>
+                        <select class="form-select" id="role" name="role" required>
+                            <option value="admin">Admin</option>
+                            <option value="member">Member</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subscription" class="form-label">Loại Tài Khoản</label>
+                        <select class="form-select" id="subscription" name="subscription" required>
+                            <option value="basic">Basic</option>
+                            <option value="pro">Pro</option>
+                            <option value="premium">Premium</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary" id="saveUserBtn">Lưu Thay Đổi</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+</div>
+
+<script>
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('btn-warning')) {
+        const row = event.target.closest('tr'); // Find the row
+        const userId = row.querySelector('td:first-child').textContent.trim();
+        const username = row.cells[1].textContent.trim();
+        const email = row.cells[2].textContent.trim();
+        const role = row.cells[3].textContent.trim();
+        const subscription = row.cells[4].textContent.trim();
+
+
+
+        // Populate the modal inputs
+        document.getElementById('editUserId').value = userId;
+        document.getElementById('username').value = username;
+        document.getElementById('email').value = email;
+        document.getElementById('role').value = role;
+        document.getElementById('subscription').value = subscription;
+
+        // Show the modal
+        const editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+        editUserModal.show();
+    }
+});
+
+document.getElementById('saveUserBtn').addEventListener('click', function () {
+    const form = document.getElementById('editUserForm');
+    const formData = new FormData(form);
+
+
+    fetch('index.php?ajax=updateUser', {
+        method: 'POST',
+        body: JSON.stringify(Object.fromEntries(formData)),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok.');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Update the row in the table
+                const userId = formData.get('id');
+
+                const rows = document.querySelectorAll('.user-row');
+                rows.forEach(row => {
+                    if (row.cells[0].textContent === userId) {
+                        row.cells[1].textContent = formData.get('username');
+                        row.cells[2].textContent = formData.get('email');
+                        row.cells[3].textContent = formData.get('role');
+                        row.cells[4].textContent = formData.get('subscription');
+                    }
+                });
+
+                alert('Thông tin người dùng đã được cập nhật.');
+                bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
+            } else {
+                alert(data.message || 'Cập nhật thất bại.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi cập nhật người dùng.');
+        });
+});
+
+
+</script>
+
 
 
 <script>
@@ -114,6 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td>${user.username}</td>
                         <td>${user.email}</td>
                         <td>${user.role}</td>
+                        <td>${user.subscription_type ?? "_________"}</td>
                         <td class="text-center">
                             <button class="btn btn-sm btn-warning mx-1">Sửa</button>
                             <button class="btn btn-sm btn-danger mx-1 delete-btn">Xóa</button>

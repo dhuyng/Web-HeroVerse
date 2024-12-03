@@ -15,7 +15,12 @@ if (!$conn) {
 }
 
 // Check if the database exists
-$db_check = mysqli_select_db($conn, $dbname);
+try{
+    $db_check = mysqli_select_db($conn, $dbname);
+}
+catch (Exception $e) {
+    $db_check = false;
+}
 
 if (!$db_check) {
     $create_db_query = "CREATE DATABASE IF NOT EXISTS $dbname CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";

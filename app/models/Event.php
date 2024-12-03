@@ -194,4 +194,17 @@ class Event {
         return false;
     }
 
-}
+    // Count event still working on
+    public function countEvents() {
+            $sql = "SELECT COUNT(*) AS count FROM events WHERE end_time > NOW()";
+            $stmt = mysqli_prepare($this->db, $sql);
+            if ($stmt) {
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+                $row = mysqli_fetch_assoc($result);
+                mysqli_stmt_close($stmt);
+                return $row['count'];
+            }
+            return 0;
+        }
+    }

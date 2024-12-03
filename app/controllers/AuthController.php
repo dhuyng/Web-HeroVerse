@@ -502,7 +502,7 @@ class AuthController extends BaseController {
             // Get the support ID from the request payload (JSON)
             $data = json_decode(file_get_contents("php://input"), true);
             $supportId = $data['id'];
-
+            $userId = $_SESSION['user']['id'];
 
             if (!$supportId) {
                 $response['message'] = 'Support ID is required.';
@@ -511,15 +511,83 @@ class AuthController extends BaseController {
             }
 
             $userModel = new User();
-            $toggleSuccess = $userModel->toggleSupportStatus($supportId);
+            $toggleSuccess = $userModel->toggleSupportStatus($supportId, $userId);
+            $userInfo = $userModel->getUserById($userId);
 
             error_log('-------------toggleSuccess: ' . $toggleSuccess);
 
             if ($toggleSuccess) {
                 $response['success'] = true;
+                $response['data'] = ['username' => $userInfo['username'], 'email' => $userInfo['email']];
                 $response['message'] = 'Support request status updated successfully.';
             } else {
                 $response['message'] = 'Failed to update support request status.';
+            }
+
+            echo json_encode($response);
+            exit;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
+
+    public function updateUser(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+
+            // Get the user ID from the request payload (JSON)
+            $data = json_decode(file_get_contents("php://input"), true);
+            $userId = $data['id'];
+            $username = $data['username'];
+            $email = $data['email'];
+            $role = $data['role'];
+            $subscription = $data['subscription'];
+
+            error_log('-------------Information: ' . $userId . ' ' . $username . ' ' . $email . ' ' . $role . ' ' . $subscription);
+
+
+            if (!$userId) {
+                $response['message'] = 'User ID is required.';
+                echo json_encode($response);
+                exit;
+            }
+
+            if (!$username) {
+                $response['message'] = 'Username is required.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate email
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $response['message'] = 'Địa chỉ email không hợp lệ.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate role
+            if (!in_array($role, ['Member', 'admin'])) {
+                $response['message'] = 'Role is invalid.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate subscription
+            if (!in_array($subscription, ['basic', 'premium', 'pro'])) {
+                $response['message'] = 'Subscription is invalid.';
+                echo json_encode($response);
+                exit;
+            }
+
+
+            $userModel = new User();
+            $updateSuccess = $userModel->updateUser($userId, $username, $email, $role, $subscription);
+
+            if ($updateSuccess) {
+                $response['success'] = true;
+                $response['message'] = 'User role updated successfully.';
+            } else {
+                $response['message'] = 'Failed to update user role.';
             }
 
             echo json_encode($response);
