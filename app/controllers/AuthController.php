@@ -566,7 +566,7 @@ class AuthController extends BaseController {
             }
 
             // Validate role
-            if (!in_array($role, ['Member', 'admin'])) {
+            if (!in_array($role, ['member', 'admin'])) {
                 $response['message'] = 'Role is invalid.';
                 echo json_encode($response);
                 exit;
@@ -590,6 +590,99 @@ class AuthController extends BaseController {
                 $response['message'] = 'Failed to update user role.';
             }
 
+            echo json_encode($response);
+            exit;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
+
+    public function createUser(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+
+            // Get the user ID from the request payload (JSON)
+            $data = json_decode(file_get_contents("php://input"), true);
+            $username = $data['username'];
+            $email = $data['email'];
+            $password = $data['password'];
+            $role = $data['role'];
+            $subscription = $data['subscription'];
+
+            error_log('-------------Information: ' . $username . ' ' . $email . ' ' . $role . ' ' . $subscription);
+
+            if (!$username) {
+                $response['message'] = 'Username is required.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate email
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $response['message'] = 'Địa chỉ email không hợp lệ.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate role
+            if (!in_array($role, ['member', 'admin'])) {
+                $response['message'] = 'Role is invalid.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Validate subscription
+            if (!in_array($subscription, ['basic', 'premium', 'pro'])) {
+                $response['message'] = 'Subscription is invalid.';
+                echo json_encode($response);
+                exit;
+            }
+
+            $userModel = new User();
+            $createSuccess = $userModel->createUser($username, $email, $password, $role, $subscription);
+
+            if ($createSuccess) {
+                $response['success'] = true;
+                $response['message'] = 'User created successfully.';
+            } else {
+                $response['message'] = 'Failed to create user.';
+            }
+
+            echo json_encode($response);
+            exit;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        }
+    }
+
+    public function saveQuestion(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $response = ['success' => false, 'message' => ''];
+
+            // Get the question data from the request payload (JSON)
+            $data = json_decode(file_get_contents("php://input"), true);
+            error_log('-------------POST: ' . print_r($data, true));
+            $title = $data['title'];
+            $question = $data['question'];
+
+            error_log('-------------Question: ' . $title . ' ' . $question);
+
+            if (!$title || !$question) {
+                $response['message'] = 'Vui lòng điền đầy đủ thông tin.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Save the question to the database
+            $supportModel = new Support();
+            $saveSuccess = $supportModel->saveQuestion($title, $question);
+            if ($saveSuccess) {
+                $response['success'] = true;
+                $response['message'] = 'Câu hỏi của bạn đã được gửi thành công.';
+            } else {
+                $response['message'] = 'Có lỗi xảy ra khi gửi câu hỏi.';
+            }
+            // For now, we'll just return a success response
             echo json_encode($response);
             exit;
         } else {

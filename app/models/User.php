@@ -457,4 +457,16 @@ class User {
 
     
     
+    public function createUser($username, $email, $password, $role, $subscriptionType) {
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        $query = "INSERT INTO users (username, email, password, role, subscription_type) VALUES (?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($this->db, $query);
+    
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "sssss", $username, $email, $hashedPassword, $role, $subscriptionType);
+            return mysqli_stmt_execute($stmt);
+        }
+    
+        return false;
+    }
 }

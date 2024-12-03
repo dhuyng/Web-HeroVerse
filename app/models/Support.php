@@ -22,4 +22,17 @@ class Support {
         }
         return false;
     }
+
+    public function saveQuestion($title, $question) {
+        $query = "INSERT INTO support (title, question) VALUES (?, ?)";
+        $stmt = mysqli_prepare($this->db, $query);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, 'ss', $title, $question);
+            mysqli_stmt_execute($stmt);
+            $affectedRows = mysqli_stmt_affected_rows($stmt);
+            mysqli_stmt_close($stmt);
+            return $affectedRows > 0;
+        }
+        return false;
+    }
 }
