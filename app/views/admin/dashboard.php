@@ -12,7 +12,7 @@
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="card-title text-white fw-bold">Tổng số người dùng</h5>
-                        <p class="card-text fw-bold" id="totalUsers">123</p> <!-- Cập nhật động -->
+                        <p class="card-text fw-bold" id="totalUsers">0</p> <!-- Cập nhật động -->
                     </div>
                     <i class="bi bi-person-fill fs-1"></i>
                 </div>
@@ -23,7 +23,7 @@
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="card-title text-white fw-bold">Sự kiện đang hoạt động</h5>
-                        <p class="card-text fw-bold" id="activeResources">456</p> <!-- Cập nhật động -->
+                        <p class="card-text fw-bold" id="activeResources">0</p> <!-- Cập nhật động -->
                     </div>
                     <i class="bi bi-gear-fill fs-1"></i>
                 </div>
@@ -34,7 +34,7 @@
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="card-title text-white fw-bold">Yêu cầu chưa được xử lý</h5>
-                        <p class="card-text fw-bold" id="pendingRequests">10</p> <!-- Cập nhật động -->
+                        <p class="card-text fw-bold" id="pendingRequests">0</p> <!-- Cập nhật động -->
                     </div>
                     <i class="bi bi-exclamation-circle-fill fs-1"></i>
                 </div>

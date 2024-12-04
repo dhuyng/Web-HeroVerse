@@ -23,6 +23,7 @@
                     <th>Email</th>
                     <th>Vai trò</th>
                     <th>Loại tài khoản</th>
+                    <th>Khóa người dùng</th>
                     <th class="text-center">Hành động</th>
                 </tr>
             </thead>
@@ -368,16 +369,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 userTable.innerHTML = '';
 
                 if (data.data.length > 0) {
+                    const blockText = {
+                        999: 'Unblock',
+                        0: 'Block'
+                    }
+                    const statusClass = {
+                            999: "bg-success",
+                            0: "bg-warning text-dark"
+                    };
 
                 data.data.forEach(user => {
                     const row = document.createElement('tr');
                     row.classList.add('user-row');
                     row.innerHTML = `
                         <td class="user-id">${user.id}</td>
-                        <td>${user.username}</td>
+                        <td class="user-username">${user.username}</td>
                         <td>${user.email}</td>
                         <td>${user.role}</td>
                         <td>${user.subscription_type ?? "_________"}</td>
+                        <td>
+                            <button class="badge toggle-status-btn ${statusClass[user.failed_login]}">${blockText[user.failed_login]}</button>
+                        </td>
+                        
                         <td class="text-center">
                             <button class="btn btn-sm btn-warning mx-1">Sửa</button>
                             <button class="btn btn-sm btn-danger mx-1 delete-btn">Xóa</button>
@@ -401,6 +414,69 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Có lỗi xảy ra khi tải danh sách người dùng.');
         });
     });
+</script>
+
+<script>
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('toggle-status-btn')) {
+        const row = event.target.closest('tr'); // Find the row
+        const username = row.querySelector('.user-username').textContent.trim();
+        let status;
+        if(event.target.textContent.trim() === 'Unblock'){
+            status = 0;
+        }
+        else{
+            status = 999;
+        }
+
+
+        // Example JSON string
+        const jsonString = JSON.stringify({ username: username, status: status });
+
+        // Parse the JSON string into an object
+        const jsonObject = JSON.parse(jsonString);
+
+        // Create a new FormData object
+        const formData = new FormData();
+
+
+        // Append each key-value pair to the FormData object
+        Object.keys(jsonObject).forEach(key => {
+            formData.append(key, jsonObject[key]);
+        });
+
+        fetch('index.php?ajax=unlockAccount', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok.');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if(status === 999){
+                        event.target.textContent = 'Unblock';
+                        event.target.classList.add('bg-success');
+                        event.target.classList.remove('bg-warning');
+                        event.target.classList.remove('text-dark');
+                    }
+                    else{
+                        event.target.textContent = 'Block';
+                        event.target.classList.add('bg-warning');
+                        event.target.classList.add('text-dark');
+                        event.target.classList.remove('bg-success');
+                    }
+                } else {
+                    alert(data.message || 'Không thể cập nhật trạng thái.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi cập nhật trạng thái.');
+            });
+    }
+});
 </script>
 
 <script>

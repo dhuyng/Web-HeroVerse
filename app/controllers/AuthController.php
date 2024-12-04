@@ -33,6 +33,8 @@ class AuthController extends BaseController {
     }
 
     public function login() {
+
+        error_log('-------------Calling login function');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Check Anti-CSRF token
             if (!checkToken($_POST['user_token'], $_SESSION['session_token'], 'info')) {
@@ -81,10 +83,18 @@ class AuthController extends BaseController {
 
     public function unlockAccount() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            error_log('-------------POST: ' . print_r($_POST, true));
             $username = stripslashes(trim($_POST['username']));
+            // if POST does not contain status, set status to 0
+            if (!isset($_POST['status'])) {
+                $status = 0;
+            }
+            else{
+                $status = stripslashes(trim($_POST['status']));
+            }
             $userModel = new User();
             // Reset failed login attempts
-            $userModel->resetFailedLogin($username);
+            $userModel->resetFailedLogin($username, $status);
             echo json_encode(['success' => true, 'message' => 'Account unlocked!']);
         }
     }
