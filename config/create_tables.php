@@ -208,7 +208,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
     }
 
     // Execute stored procedures to create tables
-    $tablesToCreate = ['create_user_heroes','create_users_table', 'create_heroes_table','create_map_table', 'create_events_table', 'create_comments_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table', 'create_support_table'];
+    $tablesToCreate = ['create_users_table', 'create_heroes_table','create_map_table', 'create_events_table', 'create_comments_table', 'create_pages_table', 'create_recharge_history_table', 'create_usage_history_table', 'create_support_table','create_user_heroes'];
 
     foreach ($tablesToCreate as $procedureName) {
         if ($mysqli->query("CALL $procedureName()") === TRUE) {

@@ -32,10 +32,10 @@ class User {
         return mysqli_fetch_assoc($result);
     }
     
-    public function resetFailedLogin($username) {
-        $query = "UPDATE users SET failed_login = 0, last_login = NOW() WHERE username = ? OR email = ?";
+    public function resetFailedLogin($username, $status=0) {
+        $query = "UPDATE users SET failed_login = ?, last_login = NOW() WHERE username = ? OR email = ?";
         $stmt = mysqli_prepare($this->db, $query);
-        mysqli_stmt_bind_param($stmt, "ss", $username, $username);
+        mysqli_stmt_bind_param($stmt, "iss", $status, $username, $username);
         mysqli_stmt_execute($stmt);
     }
     

@@ -44,7 +44,7 @@ class DashboardController extends BaseController{
             $supportModel = new Support();
             $count = $supportModel->countSupports();
             error_log('----------countSupports' . $count);
-            if($count){
+            if($count !== false){
                 $response = [
                     'status' => 'success',
                     'message' => 'Supports count fetched successfully',
@@ -112,7 +112,7 @@ public function countEvents(){
 
         error_log('----------countEvents' . $count);
 
-        if($count){
+        if($count !== false){
             $response = [
                 'status' => 'success',
                 'message' => 'Events count fetched successfully',
