@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ?>
             <div class="col-sm-6 col-md-3 mb-4 hero-item <?php echo htmlspecialchars($hero['type']); ?> <?php echo $owned_check ? 'owned' : ''; ?>">
                 <div class="card text-light text-center shadow-lg border-0 h-100 hero-card" style="position: relative; background-color: #3B1E54;">
-                    <a href="/HeroVerse/<?php echo urlencode($hero['name']); ?>" class="hero-link">
+                    <a href="<?php echo urlencode($hero['name']); ?>" class="hero-link">
                         <img src="<?php echo htmlspecialchars($hero['image']); ?>" 
                              class="card-img-top img-fluid rounded-circle mx-auto mt-3 hero-img" 
                              style="width: 150px; height: 150px;" 

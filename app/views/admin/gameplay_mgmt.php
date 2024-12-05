@@ -82,7 +82,7 @@ $maps = $mapController->getAllMaps();
                                     <td><?php echo htmlspecialchars($map['id']); ?></td>
                                     <td><?php echo htmlspecialchars($map['name']); ?></td>
                                     <td>
-                                        <img src="/HeroVerse/<?php echo htmlspecialchars($map['image']); ?>" 
+                                        <img src="<?php echo htmlspecialchars($map['image']); ?>" 
                                              alt="Map Image" style="width: 100px;">
                                     </td>
                                     <td><?php echo htmlspecialchars($map['created_at']); ?></td>
@@ -311,7 +311,7 @@ $heroes = $heroController->getAllHeroes();
                                     <td><?php echo htmlspecialchars($hero['created_at']); ?></td>
                                     <td><?php echo htmlspecialchars($hero['updated_at']); ?></td>
                                     <td>
-                                        <img src="/HeroVerse/<?php echo htmlspecialchars($hero['image']); ?>" 
+                                        <img src="<?php echo htmlspecialchars($hero['image']); ?>" 
                                              alt="Hero Image" style="width: 100px;">
                                     </td>
                                     <td>
