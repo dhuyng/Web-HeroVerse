@@ -138,7 +138,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
                 payment_method ENUM('momo', 'zalopay', 'code') NOT NULL, -- Payment method
                 status ENUM('pending', 'completed', 'failed') DEFAULT 'pending', -- To track transaction state
                 description TEXT,
-                FOREIGN KEY (user_id) REFERENCES users(id)
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );
         END;
         ",
@@ -151,7 +151,7 @@ if (!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
                 date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 coins_used INT NOT NULL, -- Coins spent
                 description TEXT NOT NULL, -- Description of the transaction
-                FOREIGN KEY (user_id) REFERENCES users(id)
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );
         END;
         ",
